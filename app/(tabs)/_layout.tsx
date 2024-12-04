@@ -13,8 +13,8 @@ export default function TabLayout() {
         screenOptions={{
             tabBarActiveTintColor: '#468364',
             tabBarLabelStyle: {
-                fontSize: 12,  // Optional: you can adjust font size of the label text
-                fontWeight: 'bold',  // Optional: make the text bold
+                fontSize: 12,  
+                fontWeight: 'bold', 
             },
             headerStyle: {
             backgroundColor: '#25292e',
@@ -22,9 +22,9 @@ export default function TabLayout() {
             headerShadowVisible: false,
             headerTintColor: '#fff',
             tabBarStyle: {
-                backgroundColor: '#fff', // white background
-                borderTopWidth: 1,        // grey border
-                borderTopColor: '#D3D3D3', // light grey color
+                backgroundColor: '#fff',
+                borderTopWidth: 1,        
+                borderTopColor: '#D3D3D3', 
             },
       }}
     >

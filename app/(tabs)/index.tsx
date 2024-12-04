@@ -1,30 +1,39 @@
-import { Text, View, StyleSheet } from 'react-native'
- import { Link } from 'expo-router'
+import React, { useEffect, useState } from 'react'
+import { View, StyleSheet } from 'react-native'
+import AsyncStorage from '@react-native-async-storage/async-storage'
+
+import TreeCards from '../components/TreeCards'
 
 export default function Index() {
-  return (
-    <View style={styles.container}>
-      <Text style={styles.text}>Home screen</Text>
-      {/*<Link href="/about" style={styles.button}>
-        Go to About screen
-      </Link>*/}
-    </View>
-  )
-}
+    const [trees, setTrees] = useState<any[]>([])
+
+    const reloadTrees = async () => {
+      try {
+          const storedTrees = await AsyncStorage.getItem('trees')
+          if (storedTrees) {
+            setTrees(JSON.parse(storedTrees))
+          }
+      } catch (error) {
+          console.error('Error loading trees from AsyncStorage:', error)
+      }
+    }
+
+    useEffect(() => {
+        reloadTrees()
+    }, [])
+
+    return (
+        <View style={styles.container}>
+            <TreeCards passedTrees={trees} />
+        </View>
+      )
+  }
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: 'white',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  text: {
-    color: 'black',
-  },
-  /*button: {
-    fontSize: 20,
-    textDecorationLine: 'underline',
-    color: 'black',
-  },*/
+    container: {
+        flex: 1,
+        backgroundColor: 'white',
+        alignItems: 'center',
+        justifyContent: 'center',
+    },
 })

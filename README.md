@@ -1,10 +1,8 @@
 # INSTALL
 npm install react-native-picker-select 
-npx expo start --tunnel
+(npx expo start --tunnel)
 
-npm install -g eas-cli
-npm install -g expo-cli
-
+npm install @react-native-async-storage/async-storage (using this to store data in sessions)
 
 # Welcome to your Expo app 👋
 
