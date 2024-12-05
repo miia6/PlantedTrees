@@ -19,7 +19,10 @@ const styles = StyleSheet.create({
     padding: 10,
   },
   title2: {
-    color: 'black',
+    fontSize: 20,
+    marginBottom: 3,
+    color: '#333',
+    fontWeight: '600',
   },
   mapContainer: {
     flex: 1,
