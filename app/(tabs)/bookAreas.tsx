@@ -13,16 +13,16 @@ export default function BookAreas() {
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
-    backgroundColor: 'white',
+    height: '80%',
     justifyContent: 'flex-start',
     alignItems: 'center',
+    padding: 10,
   },
   title2: {
     color: 'black',
   },
   mapContainer: {
-    width: '90%',
-    height: '70%',
+    flex: 1,
+    width: '95%',
   },
 })
