@@ -1,10 +1,13 @@
 import React, { useEffect, useState } from 'react'
 import { View, StyleSheet } from 'react-native'
 import AsyncStorage from '@react-native-async-storage/async-storage'
+import { useRouter } from 'expo-router'
 
 import TreeCards from '../components/TreeCards'
 
 export default function Index() {
+    const router = useRouter()
+
     const [trees, setTrees] = useState<any[]>([])
 
     const reloadTrees = async () => {
@@ -21,6 +24,8 @@ export default function Index() {
     useEffect(() => {
         reloadTrees()
     }, [])
+
+    console.log(JSON.stringify(trees))
 
     return (
         <View style={styles.container}>
