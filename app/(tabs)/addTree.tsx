@@ -1,4 +1,4 @@
-import React, { useState  } from 'react'
+import React, { useState, useEffect } from 'react'
 import { Text, TextInput, View, StyleSheet, TouchableOpacity, Alert } from 'react-native'
 import { Dropdown } from 'react-native-element-dropdown'
 import AsyncStorage from '@react-native-async-storage/async-storage'
@@ -7,9 +7,26 @@ import { useRouter } from 'expo-router'
 export default function AddTree({ reloadTrees }) {
     const [species, setSpecies] = useState('')
     const [location, setLocation] = useState('')
+    const [locationOptions, setLocationOptions] = useState([]) 
     const [numberOfTrees, setNumberOfTrees] = useState(1)
 
     const router = useRouter()
+
+
+    // FOR CLEARING LOCAL STORAGE, USE THIS
+    /*useEffect(() => {
+        const clearStorage = async () => {
+            try {
+                await AsyncStorage.clear()
+                console.log('Local storage cleared!')
+            } catch (error) {
+                console.error('Error clearing local storage:', error)
+            }
+        }
+
+        // Call clearStorage when the component is loaded
+        clearStorage()
+    }, [])*/
 
     // Options for dropdown menus
     const speciesOptions = [
@@ -21,14 +38,36 @@ export default function AddTree({ reloadTrees }) {
         { label: 'Tree 6', value: 'Tree6' },
     ]
 
-    const locationOptions = [
+    /*const locationOptions = [
         { label: 'Location 1', value: 'Location1' },
         { label: 'Location 2', value: 'Location2' },
         { label: 'Location 3', value: 'Location3' },
         { label: 'Location 4', value: 'Location4' },
         { label: 'Location 5', value: 'Location5' },
         { label: 'Location 6', value: 'Location6' },
-    ]
+    ]*/
+
+    const loadLocations = async () => {
+        try {
+            const storedMarkers = await AsyncStorage.getItem('markers')
+            if (storedMarkers) {
+                console.log("STORED " + storedMarkers)
+                const markers = JSON.parse(storedMarkers)
+                const options = markers.map((marker) => ({
+                    label: `Location ${marker.id} (${marker.area})`, // Customize as needed
+                    value: marker.id.toString(),
+                }))
+                setLocationOptions(options)
+            }
+        } catch (error) {
+            console.error('Error loading locations:', error)
+        }
+    }
+
+    useEffect(() => {
+        loadLocations()
+    }, [])
+
 
     const increment = () => {
         setNumberOfTrees(prevState => prevState + 1)
@@ -53,6 +92,16 @@ export default function AddTree({ reloadTrees }) {
     }
 
     const handleAdd = async () => {
+
+        if (!species || !location || !numberOfTrees || numberOfTrees <= 0) {
+            Alert.alert(
+                "Incomplete Details",
+                "Please select a species, location, and enter a valid number of trees.",
+                [{ text: "OK" }]
+            )
+            return
+        }
+
         try {
             const newTree = { species, location, numberOfTrees }
             const storedTrees = await AsyncStorage.getItem('trees')

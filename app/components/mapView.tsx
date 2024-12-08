@@ -1,8 +1,10 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import MapView, { Marker } from 'react-native-maps'
 import { Platform, StyleSheet, View, Text, TouchableOpacity } from 'react-native'
 import { MarkerType, MarkerState } from '../data/markerData'
 import AntDesign from '@expo/vector-icons/AntDesign'
+
+import AsyncStorage from '@react-native-async-storage/async-storage' //MIIA'S ADDITION
 
 interface MapProps {
   markers: MarkerType[]
@@ -11,6 +13,42 @@ interface MapProps {
 
 export default function Map({ markers, setMarkers }: MapProps) {
   const [selectedMarker, setSelectedMarker] = useState<MarkerType | null>(null)
+
+  // MIIA'S ADDITION: Load markers from AsyncStorage
+  const loadMarkers = async () => {
+      try {
+          const storedMarkers = await AsyncStorage.getItem('markers')
+          if (storedMarkers) {
+            const reservedMarkers: MarkerType[] = JSON.parse(storedMarkers)
+      
+            const updatedMarkers = markers.map((marker) => {
+              const reservedMarker = reservedMarkers.find((m) => m.id === marker.id)
+              return reservedMarker ? reservedMarker : marker
+            })
+      
+            setMarkers(updatedMarkers)
+        }
+      } catch (error) {
+          console.error('Error loading markers:', error)
+      }
+  }
+
+  // MIIA'S ADDITION: Save markers to AsyncStorage
+  const saveMarkers = async (updatedMarkers: MarkerType[]) => {
+      try {
+          const reservedMarkers = updatedMarkers.filter(
+            (marker) => marker.state === 'reserved' || marker.state === 'reserved_by_me'
+          )
+          await AsyncStorage.setItem('markers', JSON.stringify(reservedMarkers))
+      } catch (error) {
+          console.error('Error saving markers:', error)
+      }
+  }
+
+  // MIIA'S ADDITION
+  useEffect(() => {
+    loadMarkers()
+  }, [])
 
   const toggleSelectedMarker = (marker: MarkerType) => {
     setSelectedMarker((prev) => (prev?.id === marker.id ? null : marker))
@@ -48,6 +86,9 @@ export default function Map({ markers, setMarkers }: MapProps) {
       )
     )
 
+    // MIIA'S ADDITION
+    saveMarkers(markers) 
+
     setSelectedMarker((prev) =>
       prev
         ? {
@@ -70,14 +111,6 @@ export default function Map({ markers, setMarkers }: MapProps) {
       default:
         return null
     }
-  }
-
-  if (Platform.OS === 'web') {
-    return (
-      <View style={styles.map}>
-        <Text>Maps are not supported on the web yet. Please use a mobile device to view the map.</Text>
-      </View>
-    )
   }
 
   return (

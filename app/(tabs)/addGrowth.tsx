@@ -3,6 +3,7 @@ import { View, Text, TextInput, StyleSheet, TouchableOpacity, Alert, Keyboard, T
 import { Dropdown } from 'react-native-element-dropdown'
 import { useLocalSearchParams } from 'expo-router'
 import { useRouter } from 'expo-router'
+import AsyncStorage from '@react-native-async-storage/async-storage'
 
 export default function AddGrowth() {
     const router = useRouter()
@@ -25,16 +26,32 @@ export default function AddGrowth() {
         router.push('/')
     }
 
-    const handleAddGrowth = () => {
+    const handleAddGrowth = async () => {
         const growth = parseFloat(growthAmount)
+
         if (isNaN(growth) || growth < 0) {
             Alert.alert('Please enter a valid growth amount.')
             return
         }
 
+        if (parsedTree.numberOfTrees > 1 && !selectedTree) {
+            Alert.alert(
+                'Tree Not Selected',
+                'Please select a tree from the dropdown to report growth.',
+                [{ text: 'OK' }]
+            )
+            return
+        }
+
+        // ERROR HANDLING HERE ?
         const selectedTreeLabel = selectedTree
             ? treeOptions.find((tree) => tree.value === selectedTree)?.label
             : treeOptions[0]?.label
+
+        await AsyncStorage.setItem(
+            selectedTreeLabel,
+            JSON.stringify({ growthAmount })
+        )
 
         Alert.alert(
             'Growth Report Added',
@@ -58,10 +75,10 @@ export default function AddGrowth() {
             <Text style={styles.header}>Report Tree Growth</Text>
 
             <View style={styles.card}>
-                <Text style={styles.cardTitle}>You have selected the following report:</Text>
+                <Text style={styles.cardTitle}>Selected tree report:</Text>
                 <Text style={styles.cardText}>Specie: {parsedTree.species || 'Unknown'}</Text>
                 <Text style={styles.cardText}>Location: {parsedTree.location || 'Unknown'}</Text>
-                <Text style={styles.cardText}>Amount of reported trees: {parsedTree.numberOfTrees || 1}</Text>
+                <Text style={styles.cardText}>Amount: {parsedTree.numberOfTrees || 1}</Text>
             </View>
 
             {parsedTree.numberOfTrees > 1 ? (
@@ -142,8 +159,8 @@ const styles = StyleSheet.create({
         borderRadius: 10,
         padding: 20,
         marginBottom: 20,
-        elevation: 5, // for shadow on Android
-        shadowColor: '#000', // for shadow on iOS
+        elevation: 5,
+        shadowColor: '#000', 
         shadowOffset: { width: 0, height: 2 },
         shadowOpacity: 0.1,
         shadowRadius: 5,

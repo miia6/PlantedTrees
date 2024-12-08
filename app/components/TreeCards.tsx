@@ -11,6 +11,7 @@ const TreeCards = ({ passedTrees }) => {
     const trees = passedTrees 
     const [currentPage, setCurrentPage] = useState(0)
     const [expandedTree, setExpandedTree] = useState(null)
+    const [growthData, setGrowthData] = useState(null)
     const router = useRouter()
 
     const totalPages = Math.ceil((trees.length + 1) / CARD_LIMIT)
@@ -37,6 +38,19 @@ const TreeCards = ({ passedTrees }) => {
 
     const handleCardPress = (tree) => {
       setExpandedTree(tree)
+
+      const selectedTreeLabel = `${tree.species}.${tree.id}` // Assuming the label is something like 'Tree2.1'
+      console.log('SELECTED  ' + selectedTreeLabel)
+        AsyncStorage.getItem(selectedTreeLabel).then((storedGrowth) => {
+            if (storedGrowth) {
+                setGrowthData(JSON.parse(storedGrowth).growthAmount) // Parse the growth data if available
+            } else {
+                setGrowthData(null) // No growth data if not found
+            }
+        }).catch((error) => {
+            Alert.alert('Error', 'Failed to load growth data.')
+            setGrowthData(null) // Clear growth data in case of error
+        })
     }
 
     const handleAddGrowthPress = (tree) => {
@@ -68,7 +82,7 @@ const TreeCards = ({ passedTrees }) => {
             >
                 <MaterialCommunityIcons name="tree" size={50} color="#fff" />
                 <Text style={styles.cardText}>{item.species}</Text>
-                <Text style={styles.cardText}>{item.location}</Text>
+                <Text style={styles.cardText}>Location: {item.location}</Text>
                 <Text style={styles.cardText}>Amount: {item.numberOfTrees}</Text>
             </TouchableOpacity>
       )
@@ -178,7 +192,7 @@ const styles = StyleSheet.create({
     },
     card: {
         width: 100,
-        padding: 15,
+        padding: 10,
         height: 120,
         backgroundColor: '#468364',
         borderRadius: 10,
