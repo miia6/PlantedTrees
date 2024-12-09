@@ -25,8 +25,6 @@ export default function Index() {
         reloadTrees()
     }, [])
 
-    console.log(JSON.stringify(trees))
-
     return (
         <View style={styles.container}>
             <TreeCards passedTrees={trees} />

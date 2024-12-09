@@ -8,19 +8,34 @@ const CARD_LIMIT = 3
 const SCREEN_WIDTH = Dimensions.get('window').width
 
 const TreeCards = ({ passedTrees }) => {
-    const trees = passedTrees 
+    const aggregateReportData = (report) => {
+        return report.trees.map((tree) => ({
+            id: tree.id,
+            species: tree.species,
+            location: tree.location,
+            numberOfTrees: tree.numberOfTrees,
+        }))
+    }
+
+    const trees = passedTrees.map((report) => {
+        const treesData = aggregateReportData(report)
+        return {
+            reportId: report.reportId,
+            treesData: treesData,
+        }
+    })
+    console.log("RECEIVED TREES " + JSON.stringify(trees))
+
     const [currentPage, setCurrentPage] = useState(0)
     const [expandedTree, setExpandedTree] = useState(null)
-    const [growthData, setGrowthData] = useState(null)
+
     const router = useRouter()
 
     const totalPages = Math.ceil((trees.length + 1) / CARD_LIMIT)
-
     const currentTrees = trees.slice(
         currentPage * CARD_LIMIT,
         currentPage * CARD_LIMIT + CARD_LIMIT
     )
-
     const isLastPage = (currentPage + 1) === totalPages
     const data = isLastPage ? [...currentTrees, { id: 'addMoreCard', isAddCard: true }] : currentTrees
 
@@ -36,33 +51,32 @@ const TreeCards = ({ passedTrees }) => {
         }
     }
 
-    const handleCardPress = (tree) => {
-      setExpandedTree(tree)
-
-      const selectedTreeLabel = `${tree.species}.${tree.id}` // Assuming the label is something like 'Tree2.1'
-      console.log('SELECTED  ' + selectedTreeLabel)
-        AsyncStorage.getItem(selectedTreeLabel).then((storedGrowth) => {
-            if (storedGrowth) {
-                setGrowthData(JSON.parse(storedGrowth).growthAmount) // Parse the growth data if available
-            } else {
-                setGrowthData(null) // No growth data if not found
-            }
-        }).catch((error) => {
-            Alert.alert('Error', 'Failed to load growth data.')
-            setGrowthData(null) // Clear growth data in case of error
-        })
+    const handleCardPress = async (tree) => {
+        setExpandedTree(tree)
+        console.log(tree)
+            /*try {
+                if (storedTree) {
+                    setGrowthData(JSON.parse(storedTree).growthAmount) // Parse the growth data if available
+                } else {
+                    setGrowthData(null) // No growth data if not found
+                }
+            }.catch (error) {
+                    Alert.alert('Error', 'Failed to load tree data.')
+                    setGrowthData(null)
+            }*/
     }
 
     const handleAddGrowthPress = (tree) => {
-        //console.log("expanded: " + JSON.stringify(tree))
+        console.log("EXPANDED: " + JSON.stringify(tree))
         router.push({
             pathname: '/addGrowth',
-            params: { tree: JSON.stringify(tree) },
+            params: { report: JSON.stringify(tree) },
         })
     }
   
   
     const renderTreeCard = ({ item }) => {
+        //console.log("ITEM " + JSON.stringify(item, null, 2))
         if (item.isAddCard) {
             return (
                 <TouchableOpacity
@@ -74,18 +88,16 @@ const TreeCards = ({ passedTrees }) => {
                 </TouchableOpacity>
             )
         }
-
         return (
-            <TouchableOpacity
-              style={styles.card}
-              onPress={() => handleCardPress(item)}
-            >
+            <TouchableOpacity style={styles.card} onPress={() => handleCardPress(item)}>
+
                 <MaterialCommunityIcons name="tree" size={50} color="#fff" />
-                <Text style={styles.cardText}>{item.species}</Text>
-                <Text style={styles.cardText}>Location: {item.location}</Text>
-                <Text style={styles.cardText}>Amount: {item.numberOfTrees}</Text>
+                <Text style={styles.cardText}>{item.treesData[0].species}</Text>
+                <Text style={styles.cardText}>Location: {item.treesData[0].location}</Text>
+                <Text style={styles.cardText}>Amount: {item.treesData[0].numberOfTrees}</Text>
+   
             </TouchableOpacity>
-      )
+        );
     }
 
     return (
@@ -141,9 +153,9 @@ const TreeCards = ({ passedTrees }) => {
                         <View style={styles.expandedCard}>
                           
                             <MaterialCommunityIcons name="tree" size={80} color="#fff" />
-                            <Text style={styles.expandedCardText}>Specie: {expandedTree.species}</Text>
-                            <Text style={styles.expandedCardText}>Location: {expandedTree.location}</Text>
-                            <Text style={styles.expandedCardText}>Amount: {expandedTree.numberOfTrees}</Text>
+                            <Text style={styles.expandedCardText}>Specie: {expandedTree.treesData[0].species}</Text>
+                            <Text style={styles.expandedCardText}>Location: {expandedTree.treesData[0].location}</Text>
+                            <Text style={styles.expandedCardText}>Amount: {expandedTree.treesData[0].numberOfTrees}</Text>
 
                             <View style={styles.buttonContainer}>
                                 <TouchableOpacity

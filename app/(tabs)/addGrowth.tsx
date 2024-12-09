@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import { View, Text, TextInput, StyleSheet, TouchableOpacity, Alert, Keyboard, TouchableWithoutFeedback } from 'react-native'
 import { Dropdown } from 'react-native-element-dropdown'
 import { useLocalSearchParams } from 'expo-router'
@@ -7,19 +7,18 @@ import AsyncStorage from '@react-native-async-storage/async-storage'
 
 export default function AddGrowth() {
     const router = useRouter()
-    const { tree } = useLocalSearchParams()
-    const parsedTree = tree ? JSON.parse(tree) : {}
+    const { report } = useLocalSearchParams()
+    const trees = report ? JSON.parse(report) : {};
+    //console.log('TREES ' + trees )
 
-    const [selectedTree, setSelectedTree] = useState(null)
     const [growthAmount, setGrowthAmount] = useState('0.00')
+    const [selectedTree, setSelectedTree] = useState(null)
 
-    const treeOptions = Array.from(
-        { length: parsedTree.numberOfTrees || 1 },
-        (_, index) => ({
-            value: index + 1,
-            label: `${parsedTree.species}.${index + 1}`,
-        })
-    )
+    const treeOptions = trees.treesData.map((tree) => ({
+        label: tree.id,
+        value: tree.id,
+    }))
+    //console.log('options ' + JSON.stringify(treeOptions))
 
     const handleCancel = () => {
         Keyboard.dismiss()
@@ -34,7 +33,7 @@ export default function AddGrowth() {
             return
         }
 
-        if (parsedTree.numberOfTrees > 1 && !selectedTree) {
+        if (trees.numberOfTrees > 1 && !selectedTree) {
             Alert.alert(
                 'Tree Not Selected',
                 'Please select a tree from the dropdown to report growth.',
@@ -43,30 +42,55 @@ export default function AddGrowth() {
             return
         }
 
-        // ERROR HANDLING HERE ?
-        const selectedTreeLabel = selectedTree
-            ? treeOptions.find((tree) => tree.value === selectedTree)?.label
-            : treeOptions[0]?.label
+        try {
 
-        await AsyncStorage.setItem(
-            selectedTreeLabel,
-            JSON.stringify({ growthAmount })
-        )
+            const storedTrees = await AsyncStorage.getItem('trees')
+            const parsedTrees = storedTrees ? JSON.parse(storedTrees) : []
+            console.log("PARSED TREES " + JSON.stringify(parsedTrees))
+            console.log('REPORT ID ' + trees.reportId)
 
-        Alert.alert(
-            'Growth Report Added',
-            `Growth added for ${selectedTreeLabel}`,
-            [
-                {
-                    text: 'OK',
-                    onPress: () => { 
-                        Keyboard.dismiss()
-                        router.push('/') 
+            const reportIds = parsedTrees.map(r => r.reportId); // Get a list of all reportIds for debugging
+            console.log('Available report IDs: ', reportIds);
+            const reportIndex = parsedTrees.findIndex((r) => r.reportId === trees.reportId)
+
+            console.log("ÄÄÄÄ " + reportIndex)
+            if (reportIndex === -1) {
+                Alert.alert('Error', 'Report not found.')
+                return
+            }
+
+            const report = parsedTrees[reportIndex]
+            const treeIndex = report.treesData.findIndex((tree) => tree.id === treeId);
+
+            if (treeIndex === -1) {
+                Alert.alert('Error', 'Tree not found.');
+                return
+            }
+
+            const tree = report.treesData[treeIndex];
+            tree.growth.push(parseFloat(growthAmount))
+            parsedTrees[reportIndex] = report
+            await AsyncStorage.setItem('trees', JSON.stringify(parsedTrees))
+      
+            Alert.alert(
+                'Growth Added', 
+                `Growth of ${growthAmount} cm added to ${selectedTree}`,
+                [
+                    {
+                        text: 'OK',
+                        onPress: () => {
+                            Keyboard.dismiss()
+                            router.push('/')
+                        },
                     },
-                },
-            ],
-            { cancelable: false }
-        )
+                ],
+                {cancelable: false}
+            )
+
+        } catch (error) {
+            console.error('Error updating growth data:', error)
+            Alert.alert('Error', 'Failed to update growth data.')
+        }
     }
 
     return (
@@ -76,12 +100,12 @@ export default function AddGrowth() {
 
             <View style={styles.card}>
                 <Text style={styles.cardTitle}>Selected tree report:</Text>
-                <Text style={styles.cardText}>Specie: {parsedTree.species || 'Unknown'}</Text>
-                <Text style={styles.cardText}>Location: {parsedTree.location || 'Unknown'}</Text>
-                <Text style={styles.cardText}>Amount: {parsedTree.numberOfTrees || 1}</Text>
+                <Text style={styles.cardText}>Specie: {trees.treesData[0].species || 'Unknown'}</Text>
+                <Text style={styles.cardText}>Location: {trees.treesData[0].location || 'Unknown'}</Text>
+                <Text style={styles.cardText}>Amount: {trees.treesData[0].numberOfTrees || 1}</Text>
             </View>
 
-            {parsedTree.numberOfTrees > 1 ? (
+            {trees ? (
                 <View style={styles.inputContainer}>
                     <Text style={styles.subHeader}>Select the tree you want to report growth:</Text>
                     <Dropdown

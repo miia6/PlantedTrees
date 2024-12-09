@@ -38,15 +38,6 @@ export default function AddTree({ reloadTrees }) {
         { label: 'Tree 6', value: 'Tree6' },
     ]
 
-    /*const locationOptions = [
-        { label: 'Location 1', value: 'Location1' },
-        { label: 'Location 2', value: 'Location2' },
-        { label: 'Location 3', value: 'Location3' },
-        { label: 'Location 4', value: 'Location4' },
-        { label: 'Location 5', value: 'Location5' },
-        { label: 'Location 6', value: 'Location6' },
-    ]*/
-
     const loadLocations = async () => {
         try {
             const storedMarkers = await AsyncStorage.getItem('markers')
@@ -54,7 +45,7 @@ export default function AddTree({ reloadTrees }) {
                 console.log("STORED " + storedMarkers)
                 const markers = JSON.parse(storedMarkers)
                 const options = markers.map((marker) => ({
-                    label: `Location ${marker.id} (${marker.area})`, // Customize as needed
+                    label: `Location ${marker.id} (${marker.area})`, 
                     value: marker.id.toString(),
                 }))
                 setLocationOptions(options)
@@ -84,7 +75,7 @@ export default function AddTree({ reloadTrees }) {
             setSpecies('')
             setLocation('')
             setNumberOfTrees(1)
-            console.log('Data cleared')
+            //console.log('Data cleared')
             router.push('/')
         } catch (error) {
         console.error('Error clearing data from AsyncStorage:', error)
@@ -103,13 +94,26 @@ export default function AddTree({ reloadTrees }) {
         }
 
         try {
-            const newTree = { species, location, numberOfTrees }
             const storedTrees = await AsyncStorage.getItem('trees')
             const trees = storedTrees ? JSON.parse(storedTrees) : []
-            trees.push(newTree)
+            const reportId = `Report${trees.length + 1}`
 
-            await AsyncStorage.setItem('trees', JSON.stringify(trees))
-            console.log('Data saved:', trees)
+            const newTrees = []
+            const currentCount = 0
+            for (let i = 1; i <= numberOfTrees; i++) {
+                const uniqueId = `${species}.${currentCount + i}`
+                newTrees.push({ id: uniqueId, species, location, numberOfTrees, growth: [] })
+            }
+            
+            const newTreeReport = {
+                reportId,
+                trees: newTrees // An array of the newly added trees
+            }
+    
+            // Add the new tree report to the existing data
+            const updatedTrees = [...trees, newTreeReport]
+            await AsyncStorage.setItem('trees', JSON.stringify(updatedTrees))
+            console.log('Data saved:', JSON.stringify(updatedTrees))
 
             Alert.alert(
                 "You have successfully added a new report!",
