@@ -12,7 +12,6 @@ export default function AddTree({ reloadTrees }) {
 
     const router = useRouter()
 
-
     // FOR CLEARING LOCAL STORAGE, USE THIS
     /*useEffect(() => {
         const clearStorage = async () => {
@@ -42,7 +41,7 @@ export default function AddTree({ reloadTrees }) {
         try {
             const storedMarkers = await AsyncStorage.getItem('markers')
             if (storedMarkers) {
-                console.log("STORED " + storedMarkers)
+                //console.log("STORED " + storedMarkers)
                 const markers = JSON.parse(storedMarkers)
                 const options = markers.map((marker) => ({
                     label: `Location ${marker.id} (${marker.area})`, 
@@ -82,7 +81,7 @@ export default function AddTree({ reloadTrees }) {
         }
     }
 
-    const handleAdd = async () => {
+    /*const handleAdd = async () => {
 
         if (!species || !location || !numberOfTrees || numberOfTrees <= 0) {
             Alert.alert(
@@ -107,7 +106,8 @@ export default function AddTree({ reloadTrees }) {
             
             const newTreeReport = {
                 reportId,
-                trees: newTrees // An array of the newly added trees
+                trees: newTrees,
+                locationId: location, // An array of the newly added trees
             }
     
             // Add the new tree report to the existing data
@@ -145,7 +145,75 @@ export default function AddTree({ reloadTrees }) {
         } catch (error) {
             console.error('Error saving data to AsyncStorage:', error)
         }
-    }    
+    }    */
+
+    const handleAdd = async () => {
+        if (!species || !location || !numberOfTrees || numberOfTrees <= 0) {
+            Alert.alert(
+                "Incomplete Details",
+                "Please select a species, location, and enter a valid number of trees.",
+                [{ text: "OK" }]
+            );
+            return;
+        }
+    
+        try {
+            const storedTrees = await AsyncStorage.getItem('treesByLocation');
+            const treesByLocation = storedTrees ? JSON.parse(storedTrees) : {};
+    
+            // Initialize location if not already present
+            if (!treesByLocation[location]) {
+                treesByLocation[location] = { locationId: location, trees: [] };
+            }
+    
+            // Add new trees
+            const newTrees = [];
+            const currentCount = treesByLocation[location].trees.length;
+            for (let i = 1; i <= numberOfTrees; i++) {
+                const uniqueId = `${species}.${currentCount + i}`;
+                newTrees.push({ id: uniqueId, species, location, numberOfTrees, growth: [] });
+            }
+    
+            // Update location entry with new trees
+            treesByLocation[location].trees = [
+                ...treesByLocation[location].trees,
+                ...newTrees,
+            ];
+    
+            // Save back to AsyncStorage
+            await AsyncStorage.setItem('treesByLocation', JSON.stringify(treesByLocation));
+            console.log('Data saved:', JSON.stringify(treesByLocation));
+    
+            Alert.alert(
+                "You have successfully added trees!",
+                "Do you want to continue reporting?",
+                [
+                    {
+                        text: "OK. Don't continue reporting",
+                        onPress: () => {
+                            setSpecies('');
+                            setLocation('');
+                            setNumberOfTrees(1);
+                            router.push('/');
+                        },
+                        style: 'cancel',
+                    },
+                    {
+                        text: "OK. Continue reporting",
+                        onPress: () => {
+                            setSpecies('');
+                            setLocation('');
+                            setNumberOfTrees(1);
+                        },
+                    },
+                ],
+                { cancelable: false }
+            );
+        } catch (error) {
+            console.error('Error saving data to AsyncStorage:', error);
+        }
+    };
+        
 
 
     return (

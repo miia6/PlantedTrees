@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useState, useMemo } from 'react'
 import { View, Text, FlatList, StyleSheet, TouchableOpacity, Dimensions , Button} from 'react-native'
 import AsyncStorage from '@react-native-async-storage/async-storage'
 import { MaterialCommunityIcons } from '@expo/vector-icons'
@@ -10,56 +10,24 @@ const SCREEN_WIDTH = Dimensions.get('window').width
 const TreeCards = ({ passedTrees }) => {
     //console.log("PASSED " + JSON.stringify(passedTrees))
 
-    const aggregateReportData = (report) => {
-        return report.trees.map((tree) => ({
-            id: tree.id,
-            species: tree.species,
-            location: tree.location,
-            numberOfTrees: tree.numberOfTrees,
-        }))
-    }
+    const groupByLocation = (trees) => {
+        const grouped = [];
 
-    const trees = passedTrees.map((report) => {
-        const treesData = aggregateReportData(report)
-        return {
-            reportId: report.reportId,
-            treesData: treesData,
+        for (const locationId in trees) {
+            const locationData = trees[locationId];
+            //console.log("DATA: " + JSON.stringify(locationData.trees.length))
+            grouped.push({
+                locationId,
+                treesAmount: locationData.trees.length,
+                treesData: locationData.trees,
+            });
         }
-    })
-    console.log("RECEIVED TREES " + JSON.stringify(trees))
-
-    /*const aggregateTreesByLocation = (treesData) => {
-
-        if (!treesData || treesData.length === 0) {
-            console.log("No trees data available to aggregate.");
-            return [];
-        }
-
-        
-        const locationMap = {};
-        console.log("TREE DATA RECEIVED " + JSON.stringify(treesData))
-        if (treesData) {
-            treesData.forEach((report) => {
-                console.log("MAPPING REPORTS: " + JSON.stringify(report));
-                if (report.trees) { // Check if the trees property exists
-                    report.trees.forEach((tree) => {
-                        if (!locationMap[tree.location]) {
-                            locationMap[tree.location] = { location: tree.location, totalTrees: 0 };
-                        }
-                        locationMap[tree.location].totalTrees += tree.numberOfTrees;
-                    });
-                } else {
-                    console.warn(`No trees found in report: ${JSON.stringify(report)}`);
-                }
-        });
-            return Object.values(locationMap)
-        } else {
-            return {}
-        }
+        return grouped;
     };
 
-    const trees = aggregateTreesByLocation(passedTrees);
-    console.log('Aggregated Trees by Location: ', trees);*/
+    const trees = groupByLocation(passedTrees);
+    console.log("TREES: " + JSON.stringify(trees))
+
 
     const [currentPage, setCurrentPage] = useState(0)
     const [expandedTree, setExpandedTree] = useState(null)
@@ -89,16 +57,6 @@ const TreeCards = ({ passedTrees }) => {
     const handleCardPress = async (tree) => {
         setExpandedTree(tree)
         console.log(tree)
-            /*try {
-                if (storedTree) {
-                    setGrowthData(JSON.parse(storedTree).growthAmount) // Parse the growth data if available
-                } else {
-                    setGrowthData(null) // No growth data if not found
-                }
-            }.catch (error) {
-                    Alert.alert('Error', 'Failed to load tree data.')
-                    setGrowthData(null)
-            }*/
     }
 
     const handleAddGrowthPress = (tree) => {
@@ -127,9 +85,9 @@ const TreeCards = ({ passedTrees }) => {
             <TouchableOpacity style={styles.card} onPress={() => handleCardPress(item)}>
 
                 <MaterialCommunityIcons name="tree" size={50} color="#fff" />
-                <Text style={styles.cardText}>{item.treesData[0].species}</Text>
-                <Text style={styles.cardText}>Location: {item.treesData[0].location}</Text>
-                <Text style={styles.cardText}>Amount: {item.treesData[0].numberOfTrees}</Text>
+                {/*<Text style={styles.cardText}>{item.treesData[0].species}</Text>*/}
+                <Text style={styles.cardText}>Location: {item.locationId}</Text>
+                <Text style={styles.cardText}>Trees: {item.treesAmount}</Text>
    
             </TouchableOpacity>
         );
@@ -188,9 +146,8 @@ const TreeCards = ({ passedTrees }) => {
                         <View style={styles.expandedCard}>
                           
                             <MaterialCommunityIcons name="tree" size={80} color="#fff" />
-                            <Text style={styles.expandedCardText}>Specie: {expandedTree.treesData[0].species}</Text>
-                            <Text style={styles.expandedCardText}>Location: {expandedTree.treesData[0].location}</Text>
-                            <Text style={styles.expandedCardText}>Amount: {expandedTree.treesData[0].numberOfTrees}</Text>
+                            <Text style={styles.expandedCardText}>Location: {expandedTree.locationId}</Text>
+                            <Text style={styles.expandedCardText}>Trees: {expandedTree.treesAmount}</Text>
 
                             <View style={styles.buttonContainer}>
                                 <TouchableOpacity

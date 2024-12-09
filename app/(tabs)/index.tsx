@@ -12,7 +12,7 @@ export default function Index() {
 
     const reloadTrees = async () => {
       try {
-          const storedTrees = await AsyncStorage.getItem('trees')
+          const storedTrees = await AsyncStorage.getItem('treesByLocation')
           if (storedTrees) {
             setTrees(JSON.parse(storedTrees))
             console.log('RELOADED ')
@@ -34,11 +34,7 @@ export default function Index() {
       )*/
     return (
         <View style={styles.container}>
-            {trees.length > 0 ? (
-                <TreeCards passedTrees={trees} />
-            ) : (
-                <Text>Loading trees...</Text>
-            )}
+            <TreeCards passedTrees={trees} />
         </View>
     )
 
