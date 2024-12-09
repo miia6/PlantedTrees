@@ -75,8 +75,8 @@ export default function Map({ markers, setMarkers }: MapProps) {
   const handleButtonPress = () => {
     if (!selectedMarker) return
 
-    setMarkers((prevMarkers) =>
-      prevMarkers.map((marker) =>
+    setMarkers((prevMarkers) => {
+      const updatedMarkers: MarkerType[] = prevMarkers.map((marker) =>
         marker.id === selectedMarker.id
           ? {
               ...marker,
@@ -84,10 +84,10 @@ export default function Map({ markers, setMarkers }: MapProps) {
             }
           : marker
       )
-    )
 
-    // MIIA'S ADDITION
-    saveMarkers(markers) 
+      saveMarkers(updatedMarkers)
+      return updatedMarkers
+    })
 
     setSelectedMarker((prev) =>
       prev
