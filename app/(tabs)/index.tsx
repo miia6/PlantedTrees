@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react'
-import { View, StyleSheet } from 'react-native'
+import { View, StyleSheet, Text } from 'react-native'
 import AsyncStorage from '@react-native-async-storage/async-storage'
 import { useRouter } from 'expo-router'
 
@@ -15,6 +15,8 @@ export default function Index() {
           const storedTrees = await AsyncStorage.getItem('trees')
           if (storedTrees) {
             setTrees(JSON.parse(storedTrees))
+            console.log('RELOADED ')
+            //console.log('RELOADED: ' + storedTrees)
           }
       } catch (error) {
           console.error('Error loading trees from AsyncStorage:', error)
@@ -25,11 +27,21 @@ export default function Index() {
         reloadTrees()
     }, [])
 
-    return (
+    /*return (
         <View style={styles.container}>
             <TreeCards passedTrees={trees} />
         </View>
-      )
+      )*/
+    return (
+        <View style={styles.container}>
+            {trees.length > 0 ? (
+                <TreeCards passedTrees={trees} />
+            ) : (
+                <Text>Loading trees...</Text>
+            )}
+        </View>
+    )
+
   }
 
 const styles = StyleSheet.create({
@@ -38,5 +50,6 @@ const styles = StyleSheet.create({
         backgroundColor: 'white',
         alignItems: 'center',
         justifyContent: 'center',
+        color: 'black',
     },
 })

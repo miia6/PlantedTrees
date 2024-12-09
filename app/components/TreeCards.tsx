@@ -8,6 +8,8 @@ const CARD_LIMIT = 3
 const SCREEN_WIDTH = Dimensions.get('window').width
 
 const TreeCards = ({ passedTrees }) => {
+    //console.log("PASSED " + JSON.stringify(passedTrees))
+
     const aggregateReportData = (report) => {
         return report.trees.map((tree) => ({
             id: tree.id,
@@ -25,6 +27,39 @@ const TreeCards = ({ passedTrees }) => {
         }
     })
     console.log("RECEIVED TREES " + JSON.stringify(trees))
+
+    /*const aggregateTreesByLocation = (treesData) => {
+
+        if (!treesData || treesData.length === 0) {
+            console.log("No trees data available to aggregate.");
+            return [];
+        }
+
+        
+        const locationMap = {};
+        console.log("TREE DATA RECEIVED " + JSON.stringify(treesData))
+        if (treesData) {
+            treesData.forEach((report) => {
+                console.log("MAPPING REPORTS: " + JSON.stringify(report));
+                if (report.trees) { // Check if the trees property exists
+                    report.trees.forEach((tree) => {
+                        if (!locationMap[tree.location]) {
+                            locationMap[tree.location] = { location: tree.location, totalTrees: 0 };
+                        }
+                        locationMap[tree.location].totalTrees += tree.numberOfTrees;
+                    });
+                } else {
+                    console.warn(`No trees found in report: ${JSON.stringify(report)}`);
+                }
+        });
+            return Object.values(locationMap)
+        } else {
+            return {}
+        }
+    };
+
+    const trees = aggregateTreesByLocation(passedTrees);
+    console.log('Aggregated Trees by Location: ', trees);*/
 
     const [currentPage, setCurrentPage] = useState(0)
     const [expandedTree, setExpandedTree] = useState(null)
