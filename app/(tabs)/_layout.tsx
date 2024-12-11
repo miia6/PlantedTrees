@@ -1,6 +1,4 @@
 import { Tabs } from 'expo-router'
-
-import Ionicons from '@expo/vector-icons/Ionicons'
 import AntDesign from '@expo/vector-icons/AntDesign'
 import Feather from '@expo/vector-icons/Feather'
 import SimpleLineIcons from '@expo/vector-icons/SimpleLineIcons';
@@ -12,19 +10,17 @@ export default function TabLayout() {
     <Tabs
         screenOptions={{
             tabBarActiveTintColor: '#468364',
-            tabBarLabelStyle: {
-                fontSize: 12,  
-                fontWeight: 'bold', 
-            },
+            tabBarShowLabel: false,
             headerStyle: {
-            backgroundColor: '#25292e',
+              backgroundColor: '#fff',
             },
             headerShadowVisible: false,
-            headerTintColor: '#fff',
+            headerTintColor: 'black',
             tabBarStyle: {
                 backgroundColor: '#fff',
                 borderTopWidth: 1,        
                 borderTopColor: '#D3D3D3', 
+                height: 90,
             },
       }}
     >
@@ -78,16 +74,6 @@ export default function TabLayout() {
           ),
         }}
       />
-
-      {/*<Tabs.Screen
-        name="about"
-        options={{
-          title: 'About',
-          tabBarIcon: ({ color, focused }) => (
-            <Ionicons name={focused ? 'information-circle' : 'information-circle-outline'} color={color} size={24}/>
-          ),
-        }}
-      />*/}
 
     </Tabs>
   )
