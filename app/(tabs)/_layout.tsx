@@ -62,7 +62,7 @@ export default function TabLayout() {
       <Tabs.Screen
         name="seedingCollection"
         options={{
-          title: 'Seeding Collection',
+          title: 'Collection points',
           tabBarIcon: ({ color, focused }) => (
             <MaterialCommunityIcons name="seed-outline" color={focused ? '#468364' : 'black'} size={24} />
           ),
