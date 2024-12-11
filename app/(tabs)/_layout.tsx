@@ -11,6 +11,11 @@ export default function TabLayout() {
         screenOptions={{
             tabBarActiveTintColor: '#468364',
             tabBarShowLabel: false,
+            headerTitleStyle: {
+              fontSize: 13,
+              fontWeight: 'bold', 
+              color: 'black',
+          },
             headerStyle: {
               backgroundColor: '#fff',
             },
@@ -28,7 +33,7 @@ export default function TabLayout() {
       <Tabs.Screen
         name="index"
         options={{
-          title: 'Home',
+          title: 'HOME',
           tabBarIcon: ({ color, focused }) => (
             <AntDesign name='home' color={focused ? '#468364' : 'black'} size={24} />
           ),
@@ -38,7 +43,7 @@ export default function TabLayout() {
       <Tabs.Screen
         name="bookAreas"
         options={{
-          title: 'Book areas',
+          title: 'MY AREAS',
           tabBarIcon: ({ color, focused }) => (
             <SimpleLineIcons name="location-pin" color={focused ? '#468364' : 'black'} size={24} />
           ),
@@ -48,7 +53,7 @@ export default function TabLayout() {
       <Tabs.Screen
         name="addTree"
         options={{
-          title: 'Add tree',
+          title: 'ADD TREES',
           tabBarIcon: ({ color, focused }) => (
             <AntDesign name={focused ? 'pluscircleo' : 'pluscircleo'} color={focused ? '#468364' : 'black'} size={24} />
           ),
@@ -58,7 +63,7 @@ export default function TabLayout() {
       <Tabs.Screen
         name="seedingCollection"
         options={{
-          title: 'Collection points',
+          title: 'COLLECTION POINTS',
           tabBarIcon: ({ color, focused }) => (
             <MaterialCommunityIcons name="seed-outline" color={focused ? '#468364' : 'black'} size={24} />
           ),
@@ -68,7 +73,7 @@ export default function TabLayout() {
       <Tabs.Screen
         name="userProfile"
         options={{
-          title: 'Profile',
+          title: 'PROFILE',
           tabBarIcon: ({ color, focused }) => (
             <Feather name="user" color={focused ? '#468364' : 'black'} size={24}/>
           ),
