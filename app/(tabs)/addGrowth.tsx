@@ -8,8 +8,8 @@ import AsyncStorage from '@react-native-async-storage/async-storage'
 export default function AddGrowth() {
     const router = useRouter()
     const { report } = useLocalSearchParams()
-    const trees = report ? JSON.parse(report) : {};
-    //console.log('TREES ' + trees )
+    const trees = report ? JSON.parse(report) : {}
+    //console.log('TREES ' + report)
 
     const [growthAmount, setGrowthAmount] = useState('0.00')
     const [selectedTree, setSelectedTree] = useState(null)
@@ -22,56 +22,57 @@ export default function AddGrowth() {
 
     const handleCancel = () => {
         Keyboard.dismiss()
+        setSelectedTree(null)
+        setGrowthAmount(0.00)
         router.push('/')
     }
 
     const handleAddGrowth = async () => {
         const growth = parseFloat(growthAmount)
+        //console.log("GROWTH " + growth)
 
-        if (isNaN(growth) || growth < 0) {
-            Alert.alert('Please enter a valid growth amount.')
-            return
-        }
-
-        if (trees.numberOfTrees > 1 && !selectedTree) {
+        if (!selectedTree) {
             Alert.alert(
                 'Tree Not Selected',
-                'Please select a tree from the dropdown to report growth.',
+                'Please select a tree to report growth.',
                 [{ text: 'OK' }]
             )
             return
         }
 
+        if (isNaN(growth) || growth <= 0) {
+            Alert.alert('Please enter a valid growth amount.')
+            return
+        }
+
         try {
 
-            const storedTrees = await AsyncStorage.getItem('trees')
+            const storedTrees = await AsyncStorage.getItem('treesByLocation')
             const parsedTrees = storedTrees ? JSON.parse(storedTrees) : []
-            console.log("PARSED TREES " + JSON.stringify(parsedTrees))
-            console.log('REPORT ID ' + trees.reportId)
+            //console.log("STORED  " + JSON.stringify(parsedTrees))
+            //console.log("SELECTED " + selectedTree)
 
-            const reportIds = parsedTrees.map(r => r.reportId); // Get a list of all reportIds for debugging
-            console.log('Available report IDs: ', reportIds);
-            const reportIndex = parsedTrees.findIndex((r) => r.reportId === trees.reportId)
-
-            console.log("ÄÄÄÄ " + reportIndex)
-            if (reportIndex === -1) {
-                Alert.alert('Error', 'Report not found.')
-                return
+            let treeFound = false
+            for (const location of Object.values(parsedTrees)) {
+                const tree = location.trees.find(t => t.id === selectedTree)
+                if (tree) {
+                    //console.log("FOUNDED: " + JSON.stringify(tree))
+                    tree.growth.push(growthAmount)
+                    treeFound = true
+                    break
+                }
             }
 
-            const report = parsedTrees[reportIndex]
-            const treeIndex = report.treesData.findIndex((tree) => tree.id === treeId);
-
-            if (treeIndex === -1) {
-                Alert.alert('Error', 'Tree not found.');
-                return
+            if (!treeFound) {
+                console.log(`Tree with ID ${selectedTree} not found`)
             }
 
-            const tree = report.treesData[treeIndex];
-            tree.growth.push(parseFloat(growthAmount))
-            parsedTrees[reportIndex] = report
-            await AsyncStorage.setItem('trees', JSON.stringify(parsedTrees))
-      
+            const updatedData = JSON.stringify(parsedTrees)
+            await AsyncStorage.setItem('treesByLocation', updatedData)
+            //console.log("UPDATED: " + updatedData)
+            setSelectedTree(null)
+            setGrowthAmount(0.00)
+
             Alert.alert(
                 'Growth Added', 
                 `Growth of ${growthAmount} cm added to ${selectedTree}`,
@@ -90,6 +91,8 @@ export default function AddGrowth() {
         } catch (error) {
             console.error('Error updating growth data:', error)
             Alert.alert('Error', 'Failed to update growth data.')
+            setSelectedTree(null)
+            setGrowthAmount(0.00)
         }
     }
 
@@ -99,10 +102,8 @@ export default function AddGrowth() {
             <Text style={styles.header}>Report Tree Growth</Text>
 
             <View style={styles.card}>
-                <Text style={styles.cardTitle}>Selected tree report:</Text>
-                <Text style={styles.cardText}>Specie: {trees.treesData[0].species || 'Unknown'}</Text>
                 <Text style={styles.cardText}>Location: {trees.treesData[0].location || 'Unknown'}</Text>
-                <Text style={styles.cardText}>Amount: {trees.treesData[0].numberOfTrees || 1}</Text>
+                <Text style={styles.cardText}>Amount of trees: {trees.treesAmount}</Text>
             </View>
 
             {trees ? (
@@ -179,7 +180,7 @@ const styles = StyleSheet.create({
     },
 
     card: {
-        backgroundColor: '#f8f8f8',
+        backgroundColor: '#E9EAEC',
         borderRadius: 10,
         padding: 20,
         marginBottom: 20,
@@ -189,16 +190,9 @@ const styles = StyleSheet.create({
         shadowOpacity: 0.1,
         shadowRadius: 5,
     },
-    cardTitle: {
-        fontSize: 18,
-        fontWeight: 'bold',
-        color: '#333',
-        marginBottom: 10,
-    },
     cardText: {
-        fontSize: 16,
+        fontSize: 20,
         color: '#333',
-        marginBottom: 5,
     },
 
     inputContainer: {

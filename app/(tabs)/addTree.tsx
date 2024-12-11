@@ -81,8 +81,7 @@ export default function AddTree({ reloadTrees }) {
         }
     }
 
-    /*const handleAdd = async () => {
-
+    const handleAdd = async () => {
         if (!species || !location || !numberOfTrees || numberOfTrees <= 0) {
             Alert.alert(
                 "Incomplete Details",
@@ -91,38 +90,37 @@ export default function AddTree({ reloadTrees }) {
             )
             return
         }
-
+    
         try {
-            const storedTrees = await AsyncStorage.getItem('trees')
-            const trees = storedTrees ? JSON.parse(storedTrees) : []
-            const reportId = `Report${trees.length + 1}`
-
+            const storedTrees = await AsyncStorage.getItem('treesByLocation')
+            const treesByLocation = storedTrees ? JSON.parse(storedTrees) : {}
+    
+            if (!treesByLocation[location]) {
+                treesByLocation[location] = { locationId: location, trees: [] }
+            }
+    
             const newTrees = []
-            const currentCount = 0
+            const currentCount = treesByLocation[location].trees.length
             for (let i = 1; i <= numberOfTrees; i++) {
                 const uniqueId = `${species}.${currentCount + i}`
                 newTrees.push({ id: uniqueId, species, location, numberOfTrees, growth: [] })
             }
-            
-            const newTreeReport = {
-                reportId,
-                trees: newTrees,
-                locationId: location, // An array of the newly added trees
-            }
     
-            // Add the new tree report to the existing data
-            const updatedTrees = [...trees, newTreeReport]
-            await AsyncStorage.setItem('trees', JSON.stringify(updatedTrees))
-            console.log('Data saved:', JSON.stringify(updatedTrees))
-
+            treesByLocation[location].trees = [
+                ...treesByLocation[location].trees,
+                ...newTrees,
+            ]
+    
+            await AsyncStorage.setItem('treesByLocation', JSON.stringify(treesByLocation))
+            console.log('Data saved:', JSON.stringify(treesByLocation))
+    
             Alert.alert(
-                "You have successfully added a new report!",
+                "You have successfully added trees!",
                 "Do you want to continue reporting?",
                 [
                     {
                         text: "OK. Don't continue reporting",
                         onPress: () => {
-                            console.log('User chose not to continue reporting')
                             setSpecies('')
                             setLocation('')
                             setNumberOfTrees(1)
@@ -133,7 +131,6 @@ export default function AddTree({ reloadTrees }) {
                     {
                         text: "OK. Continue reporting",
                         onPress: () => {
-                            console.log('User chose to continue reporting')
                             setSpecies('')
                             setLocation('')
                             setNumberOfTrees(1)
@@ -145,76 +142,8 @@ export default function AddTree({ reloadTrees }) {
         } catch (error) {
             console.error('Error saving data to AsyncStorage:', error)
         }
-    }    */
-
-    const handleAdd = async () => {
-        if (!species || !location || !numberOfTrees || numberOfTrees <= 0) {
-            Alert.alert(
-                "Incomplete Details",
-                "Please select a species, location, and enter a valid number of trees.",
-                [{ text: "OK" }]
-            );
-            return;
-        }
-    
-        try {
-            const storedTrees = await AsyncStorage.getItem('treesByLocation');
-            const treesByLocation = storedTrees ? JSON.parse(storedTrees) : {};
-    
-            // Initialize location if not already present
-            if (!treesByLocation[location]) {
-                treesByLocation[location] = { locationId: location, trees: [] };
-            }
-    
-            // Add new trees
-            const newTrees = [];
-            const currentCount = treesByLocation[location].trees.length;
-            for (let i = 1; i <= numberOfTrees; i++) {
-                const uniqueId = `${species}.${currentCount + i}`;
-                newTrees.push({ id: uniqueId, species, location, numberOfTrees, growth: [] });
-            }
-    
-            // Update location entry with new trees
-            treesByLocation[location].trees = [
-                ...treesByLocation[location].trees,
-                ...newTrees,
-            ];
-    
-            // Save back to AsyncStorage
-            await AsyncStorage.setItem('treesByLocation', JSON.stringify(treesByLocation));
-            console.log('Data saved:', JSON.stringify(treesByLocation));
-    
-            Alert.alert(
-                "You have successfully added trees!",
-                "Do you want to continue reporting?",
-                [
-                    {
-                        text: "OK. Don't continue reporting",
-                        onPress: () => {
-                            setSpecies('');
-                            setLocation('');
-                            setNumberOfTrees(1);
-                            router.push('/');
-                        },
-                        style: 'cancel',
-                    },
-                    {
-                        text: "OK. Continue reporting",
-                        onPress: () => {
-                            setSpecies('');
-                            setLocation('');
-                            setNumberOfTrees(1);
-                        },
-                    },
-                ],
-                { cancelable: false }
-            );
-        } catch (error) {
-            console.error('Error saving data to AsyncStorage:', error);
-        }
-    };
+    }
         
-
 
     return (
         <View style={styles.container}>

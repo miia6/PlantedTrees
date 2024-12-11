@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useMemo } from 'react'
-import { View, Text, FlatList, StyleSheet, TouchableOpacity, Dimensions , Button} from 'react-native'
+import { View, Text, FlatList, StyleSheet, TouchableOpacity, Dimensions, Button, TouchableWithoutFeedback } from 'react-native'
 import AsyncStorage from '@react-native-async-storage/async-storage'
 import { MaterialCommunityIcons } from '@expo/vector-icons'
 import { useRouter } from 'expo-router'
@@ -11,23 +11,22 @@ const TreeCards = ({ passedTrees }) => {
     //console.log("PASSED " + JSON.stringify(passedTrees))
 
     const groupByLocation = (trees) => {
-        const grouped = [];
+        const grouped = []
 
         for (const locationId in trees) {
-            const locationData = trees[locationId];
+            const locationData = trees[locationId]
             //console.log("DATA: " + JSON.stringify(locationData.trees.length))
             grouped.push({
                 locationId,
                 treesAmount: locationData.trees.length,
                 treesData: locationData.trees,
-            });
+            })
         }
-        return grouped;
-    };
+        return grouped
+    }
 
-    const trees = groupByLocation(passedTrees);
-    console.log("TREES: " + JSON.stringify(trees))
-
+    const trees = groupByLocation(passedTrees)
+    //console.log("TREES: " + JSON.stringify(trees))
 
     const [currentPage, setCurrentPage] = useState(0)
     const [expandedTree, setExpandedTree] = useState(null)
@@ -90,7 +89,7 @@ const TreeCards = ({ passedTrees }) => {
                 <Text style={styles.cardText}>Trees: {item.treesAmount}</Text>
    
             </TouchableOpacity>
-        );
+        )
     }
 
     return (
@@ -142,32 +141,41 @@ const TreeCards = ({ passedTrees }) => {
 
             {expandedTree && (
                 <View style={styles.overlayContainer}>
-                    <View style={styles.overlay} />
-                        <View style={styles.expandedCard}>
-                          
-                            <MaterialCommunityIcons name="tree" size={80} color="#fff" />
-                            <Text style={styles.expandedCardText}>Location: {expandedTree.locationId}</Text>
-                            <Text style={styles.expandedCardText}>Trees: {expandedTree.treesAmount}</Text>
+                    <TouchableWithoutFeedback onPress={() => setExpandedTree(null)}>
+                        <View style={styles.overlay} />
+                    </TouchableWithoutFeedback>
+                            <View style={styles.expandedCard}>
+                            
+                                <MaterialCommunityIcons name="tree" size={80} color="#fff" />
+                                <Text style={styles.expandedCardText}>Location: {expandedTree.locationId}</Text>
+                                <Text style={styles.expandedCardText}>Trees: {expandedTree.treesAmount}</Text>
 
-                            <View style={styles.buttonContainer}>
-                                <TouchableOpacity
-                                    style={[styles.actionButton, styles.backButton]}
-                                    onPress={() => setExpandedTree(null)}
-                                >
-                                    <Text style={styles.buttonText}>Back to List</Text>
-                                </TouchableOpacity>
+                                <View style={styles.buttonContainer}>
+                                    <TouchableOpacity
+                                        style={[styles.actionButton, styles.addGrowthButton]}
+                                        onPress={() => handleAddGrowthPress(expandedTree)}
+                                    >
+                                        <Text style={styles.buttonText}>Add Growth</Text>
+                                    </TouchableOpacity>
 
-                                <TouchableOpacity
-                                    style={[styles.actionButton, styles.addGrowthButton]}
-                                    onPress={() => handleAddGrowthPress(expandedTree)}
-                                >
-                                    <Text style={styles.buttonText}>Add Growth</Text>
-                                </TouchableOpacity>
-                            </View>
-                      </View>
+                                    <TouchableOpacity
+                                        style={[styles.actionButton, styles.addPicButton]}
+                                        onPress={() => console.log("functionality not implemented")}
+                                    >
+                                        <Text style={styles.buttonText}>Add picture</Text>
+                                    </TouchableOpacity>
+
+                                    <TouchableOpacity
+                                        style={[styles.actionButton, styles.deleteButton]}
+                                        onPress={() => setExpandedTree(null)}
+                                    >
+                                        <Text style={styles.buttonText}>Delete trees</Text>
+                                    </TouchableOpacity>
+
+                                </View>
+                        </View>
                 </View>
             )}
-
         </View>
     )
 }
@@ -278,27 +286,39 @@ const styles = StyleSheet.create({
     },
 
     buttonContainer: {
-        flexDirection: 'row',
-        justifyContent: 'space-between',
-        marginTop: 20,
+        flexDirection: 'column',
+        justifyContent: 'center',
+        margin: 0,
+        marginTop: 10,
         width: '100%',
     },
     actionButton: {
-        flex: 1,
         padding: 10,
-        marginHorizontal: 10,
+        margin: 10,
         borderRadius: 10,
         alignItems: 'center',
         justifyContent: 'center',
+        borderWidth: 1,
+        borderColor: '#2a6044',
+        shadowColor: '#lightgrey', // Shadow color
+        shadowOffset: {
+        width: 0, // Horizontal shadow offset
+        height: 2, // Vertical shadow offset
+        },
+        shadowOpacity: 0.25,
     },
     addGrowthButton: {
-        backgroundColor: '#01452c', // Green
+        backgroundColor: '#A0A0A0', // Green
     },
-    backButton: {
-        backgroundColor: 'grey', // Grey
+    addPicButton: {
+        backgroundColor: '#A0A0A0', // Green
+    },
+    deleteButton: {
+        marginTop: 20,
+        backgroundColor: '#FF5252', // Grey
     },
     buttonText: {
-        color: '#fff',
+        color: 'white',
         fontSize: 15,
         fontWeight: 'bold',
     },

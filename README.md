@@ -4,6 +4,9 @@ npm install react-native-picker-select
 
 npm install @react-native-async-storage/async-storage (using this to store data in sessions)
 
+FOR HISTOGRAM OF GROWTH, USE:
+npx expo install react-native-svg
+
 # Welcome to your Expo app 👋
 
 This is an [Expo](https://expo.dev) project created with [`create-expo-app`](https://www.npmjs.com/package/create-expo-app).

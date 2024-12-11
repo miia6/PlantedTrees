@@ -4,6 +4,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage'
 import { useRouter } from 'expo-router'
 
 import TreeCards from '../components/TreeCards'
+import GrowthData from '../components/GrowthData'
 
 export default function Index() {
     const router = useRouter()
@@ -22,19 +23,16 @@ export default function Index() {
           console.error('Error loading trees from AsyncStorage:', error)
       }
     }
+    //console.log("TREES " + JSON.stringify(trees))
 
     useEffect(() => {
         reloadTrees()
     }, [])
 
-    /*return (
-        <View style={styles.container}>
-            <TreeCards passedTrees={trees} />
-        </View>
-      )*/
     return (
         <View style={styles.container}>
             <TreeCards passedTrees={trees} />
+            <GrowthData />
         </View>
     )
 
