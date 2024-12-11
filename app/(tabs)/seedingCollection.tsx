@@ -108,6 +108,7 @@ const styles = StyleSheet.create({
     fontSize: 18,
     fontWeight: 'bold',
     marginHorizontal: 32,
+    marginTop: 8,
   },
   address: {
     flexDirection: 'row',
@@ -131,7 +132,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     height: 400,
     width: '100%',
-    borderRadius: 5,
+    borderRadius: 8,
     marginBottom: 30
   },
   currentLocation: {

@@ -3,6 +3,7 @@ import MapView, { Marker } from 'react-native-maps'
 import { Platform, StyleSheet, View, Text, TouchableOpacity } from 'react-native'
 import { MarkerType, MarkerState } from '../data/markerData'
 import AntDesign from '@expo/vector-icons/AntDesign'
+import Ionicons from '@expo/vector-icons/Ionicons'
 
 import AsyncStorage from '@react-native-async-storage/async-storage' //MIIA'S ADDITION
 
@@ -141,7 +142,7 @@ export default function Map({ markers, setMarkers }: MapProps) {
             style={styles.closeButton}
             onPress={() => setSelectedMarker(null)}
           >
-            <AntDesign name="closecircleo" size={28} color="black" />
+            <Ionicons name="close" size={28} color="white"/>
           </TouchableOpacity>
           <Text style={[styles.detailsHeader]}>Location {selectedMarker.id}</Text>
           <Text style={styles.detailsText}>Area: {selectedMarker.area}</Text>
@@ -169,12 +170,13 @@ const styles = StyleSheet.create({
   map: {
     height: '100%',
     width: '100%',
+    borderRadius: 12,
   },
   point: {
     width: 20,
     height: 20,
     borderRadius: 15,
-    borderWidth: 1,
+    borderWidth: 0,
     borderColor: 'black',
   },
   redPoint: {
@@ -187,50 +189,62 @@ const styles = StyleSheet.create({
     backgroundColor: 'green',
   },
   largePoint: {
-    width: 30, 
-    height: 30,
+    width: 28, 
+    height: 28,
     borderRadius: 20,
     borderWidth: 1,
-    borderColor: 'black',
+    borderColor: 'white',
   },
   detailsContainer: {
     height: '41%',
-    backgroundColor: '#ccc',
+    backgroundColor: '#749A9F',
     padding: 20,
-    marginTop: 10,
+    marginTop: 12,
     position: 'relative',
+    borderRadius: 12,
+    shadowColor: '#000', 
+    shadowOffset: { width: 2, height: 9 }, 
+    shadowOpacity: 0.3,
+    shadowRadius: 3.84,
   },
   detailsText: {
     fontSize: 16,
+    fontWeight: 500,
     marginVertical: 1.5,
     paddingLeft: 5,
+    color: "white",
   },
   detailsHeader: {
-    fontWeight: 'bold',
-    marginVertical: 1.5,
+    fontWeight: 800,
     fontSize: 17,
+    color: "white",
+    marginBottom: 8,
   },
   buttonContainer: {
     position: 'absolute',
-    bottom: 10,
-    right: 10,
+    bottom: 14,
+    right: 12,
   },  
   button: {
-    width: 130,
-    height: 40,
+    width: 116,
+    height: 34,
     alignItems: 'center',
     justifyContent: 'center',
     borderRadius: 8,
-    backgroundColor: '#468364',
+    backgroundColor: '#CDF2CD',
+    shadowColor: '#000', 
+    shadowOffset: { width: 0, height: 2 }, 
+    shadowOpacity: 0.25,
+    shadowRadius: 3.84,
     },
   buttonText: {
-    fontSize: 24,
+    fontSize: 18,
     fontWeight: 'bold',
-    color: 'white',
+    color: '#232F30',
   },
   closeButton: {
     position: 'absolute',
-    top: 10,
-    right: 10,
+    top: 12,
+    right: 16,
   },
 })

@@ -44,7 +44,8 @@ export default function UserProfile() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    padding: 15,
+    paddingHorizontal: 15,
+    paddingVertical: 3,
     backgroundColor: 'white',
   },
   firstContainer: {
