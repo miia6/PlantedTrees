@@ -16,7 +16,7 @@ export const markers: MarkerType[] = [
   { id: 1, coordinate: { latitude: 9.004631, longitude: 38.022385 }, state: 'available', area: '40m²', treeType: 'Eucalyptus', treeAmount: 9, compensation: '180 SSP' },
   { id: 2, coordinate: { latitude: 9.504631, longitude: 38.122385 }, state: 'reserved_by_me', area: '90m²', treeType: 'Mango', treeAmount: 14, compensation: '220 SSP' },
   { id: 3, coordinate: { latitude: 9.204631, longitude: 37.522385 }, state: 'available', area: '100m²', treeType: 'Acacia', treeAmount: 20, compensation: '290 SSP' },
-  { id: 4, coordinate: { latitude: 8.804631, longitude: 38.522385 }, state: 'reserved', area: '230m²', treeType: 'Teak', treeAmount: 32, compensation: '420 SSP' },
+  { id: 4, coordinate: { latitude: 8.804631, longitude: 38.522385 }, state: 'available', area: '230m²', treeType: 'Teak', treeAmount: 32, compensation: '420 SSP' },
   { id: 5, coordinate: { latitude: 8.604631, longitude: 38.522385 }, state: 'reserved_by_me', area: '110m²', treeType: 'Moringa', treeAmount: 18, compensation: '300 SSP' },
   { id: 6, coordinate: { latitude: 8.604631, longitude: 38.122385 }, state: 'available', area: '200m²', treeType: 'Cashew', treeAmount: 23, compensation: '320 SSP' },
   { id: 7, coordinate: { latitude: 8.694631, longitude: 38.022385 }, state: 'available', area: '140m²', treeType: 'Eucalyptus', treeAmount: 19, compensation: '260 SSP' },

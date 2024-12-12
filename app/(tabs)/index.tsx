@@ -22,11 +22,27 @@ export default function Index() {
           console.error('Error loading trees from AsyncStorage:', error)
       }
     }
-    //console.log("TREES " + JSON.stringify(trees))
+    //console.log("TREES IN INDEX " + JSON.stringify(trees))
 
     useEffect(() => {
         reloadTrees()
     }, [])
+
+    
+    // FOR CLEARING LOCAL STORAGE, USE THIS
+    /*useEffect(() => {
+        const clearStorage = async () => {
+            try {
+                await AsyncStorage.clear()
+                console.log('Local storage cleared!')
+            } catch (error) {
+                console.error('Error clearing local storage:', error)
+            }
+        }
+
+        // Call clearStorage when the component is loaded
+        clearStorage()
+    }, [])*/
 
 
     return (

@@ -5,57 +5,42 @@ import AsyncStorage from '@react-native-async-storage/async-storage'
 import { useRouter } from 'expo-router'
 
 export default function AddTree({ reloadTrees }) {
-    const [species, setSpecies] = useState('')
-    const [location, setLocation] = useState('')
-    const [locationOptions, setLocationOptions] = useState([]) 
+    //const [species, setSpecies] = useState('')
+    //const [location, setLocation] = useState('')
+    const [chosen, setChosen] = useState('')
+    const [options, setOptions] = useState([]) 
     const [numberOfTrees, setNumberOfTrees] = useState(1)
 
     const router = useRouter()
 
-    // FOR CLEARING LOCAL STORAGE, USE THIS
-    /*useEffect(() => {
-        const clearStorage = async () => {
-            try {
-                await AsyncStorage.clear()
-                console.log('Local storage cleared!')
-            } catch (error) {
-                console.error('Error clearing local storage:', error)
-            }
-        }
-
-        // Call clearStorage when the component is loaded
-        clearStorage()
-    }, [])*/
-
-    // Options for dropdown menus
-    const speciesOptions = [
-        { label: 'Tree 1', value: 'Tree1' },
-        { label: 'Tree 2', value: 'Tree2' },
-        { label: 'Tree 3', value: 'Tree3' },
-        { label: 'Tree 4', value: 'Tree4' },
-        { label: 'Tree 5', value: 'Tree5' },
-        { label: 'Tree 6', value: 'Tree6' },
-    ]
-
-    const loadLocations = async () => {
+    const loadData = async () => {
         try {
+            const initialOptions = [
+                { label: 'Location 2 (90m²), Mango', value: '2', treeType: 'Mango' },
+                { label: 'Location 5 (110m²), Moringa', value: '5', treeType: 'Moringa' }
+            ] 
+            setOptions(initialOptions)
+
             const storedMarkers = await AsyncStorage.getItem('markers')
             if (storedMarkers) {
                 //console.log("STORED " + storedMarkers)
                 const markers = JSON.parse(storedMarkers)
+
                 const options = markers.map((marker) => ({
-                    label: `Location ${marker.id} (${marker.area})`, 
+                    label: `Location ${marker.id} (${marker.area}), ${marker.treeType}`, 
                     value: marker.id.toString(),
+                    treeType: marker.treeType,
                 }))
-                setLocationOptions(options)
+                setOptions(options)
+
             }
         } catch (error) {
-            console.error('Error loading locations:', error)
+            console.error('Error loading marker data:', error)
         }
     }
 
     useEffect(() => {
-        loadLocations()
+        loadData()
     }, [])
 
 
@@ -71,10 +56,10 @@ export default function AddTree({ reloadTrees }) {
 
     const handleCancel = async () => {
         try {
-            setSpecies('')
-            setLocation('')
+            //setSpecies('')
+            //setLocation('')
+            setChosen('')
             setNumberOfTrees(1)
-            //console.log('Data cleared')
             router.push('/')
         } catch (error) {
         console.error('Error clearing data from AsyncStorage:', error)
@@ -82,10 +67,10 @@ export default function AddTree({ reloadTrees }) {
     }
 
     const handleAdd = async () => {
-        if (!species || !location || !numberOfTrees || numberOfTrees <= 0) {
+        if (!chosen || !numberOfTrees || numberOfTrees <= 0) {
             Alert.alert(
                 "Incomplete Details",
-                "Please select a species, location, and enter a valid number of trees.",
+                "Please select a location and specie, and enter a valid number of trees.",
                 [{ text: "OK" }]
             )
             return
@@ -94,12 +79,24 @@ export default function AddTree({ reloadTrees }) {
         try {
             const storedTrees = await AsyncStorage.getItem('treesByLocation')
             const treesByLocation = storedTrees ? JSON.parse(storedTrees) : {}
+
+            const selectedOption = options.find(option => option.value === chosen);
+            const locationId = selectedOption.value;
+            const treeType = selectedOption.treeType;
     
-            if (!treesByLocation[location]) {
-                treesByLocation[location] = { locationId: location, trees: [] }
+            if (!treesByLocation[locationId]) {
+                treesByLocation[locationId] = {
+                    treeType,
+                    numberOfTrees: 0,
+                    growth: [], 
+                }
             }
+
+            treesByLocation[locationId].numberOfTrees += numberOfTrees
+            await AsyncStorage.setItem('treesByLocation', JSON.stringify(treesByLocation))
+            console.log('Data saved:', JSON.stringify(treesByLocation))
     
-            const newTrees = []
+            /*const newTrees = []
             const currentCount = treesByLocation[location].trees.length
             for (let i = 1; i <= numberOfTrees; i++) {
                 const uniqueId = `${species}.${currentCount + i}`
@@ -112,7 +109,7 @@ export default function AddTree({ reloadTrees }) {
             ]
     
             await AsyncStorage.setItem('treesByLocation', JSON.stringify(treesByLocation))
-            console.log('Data saved:', JSON.stringify(treesByLocation))
+            console.log('Data saved:', JSON.stringify(treesByLocation))*/
     
             Alert.alert(
                 "You have successfully added trees!",
@@ -121,8 +118,9 @@ export default function AddTree({ reloadTrees }) {
                     {
                         text: "OK. Don't continue reporting",
                         onPress: () => {
-                            setSpecies('')
-                            setLocation('')
+                            //setSpecies('')
+                            //setLocation('')
+                            setChosen('')
                             setNumberOfTrees(1)
                             router.push('/')
                         },
@@ -131,8 +129,9 @@ export default function AddTree({ reloadTrees }) {
                     {
                         text: "OK. Continue reporting",
                         onPress: () => {
-                            setSpecies('')
-                            setLocation('')
+                            //setSpecies('')
+                            //setLocation('')
+                            setChosen('')
                             setNumberOfTrees(1)
                         },
                     },
@@ -150,7 +149,20 @@ export default function AddTree({ reloadTrees }) {
             <Text style={styles.header}>Report new trees</Text>
 
                 <View style={styles.inputContainer}>
-                    <Text style={styles.subHeader}>Specie</Text>
+
+                <Text style={styles.subHeader}>Location</Text>
+                        <Dropdown
+                            style={styles.dropdown}
+                            data={options}
+                            labelField="label"
+                            valueField="value"
+                            placeholder="Select a location and specie..."
+                            value={chosen}
+                            onChange={(item) => setChosen(item.value)}
+                            placeholderStyle={styles.placeholderStyle}
+                        />
+
+                    {/*<Text style={styles.subHeader}>Specie</Text>
                         <Dropdown
                             style={styles.dropdown}
                             data={speciesOptions}
@@ -160,19 +172,7 @@ export default function AddTree({ reloadTrees }) {
                             value={species}
                             onChange={(item) => setSpecies(item.value)}
                             placeholderStyle={styles.placeholderStyle}
-                        />
-
-                    <Text style={styles.subHeader}>Location</Text>
-                        <Dropdown
-                            style={styles.dropdown}
-                            data={locationOptions}
-                            labelField="label"
-                            valueField="value"
-                            placeholder="Search and select a location..."
-                            value={location}
-                            onChange={(item) => setLocation(item.value)}
-                            placeholderStyle={styles.placeholderStyle}
-                        />
+                        />*/}
 
                     <Text style={styles.subHeader}>Amount</Text>
                         <View style={styles.numberContainer}>
@@ -250,6 +250,7 @@ const styles = StyleSheet.create({
     },
     placeholderStyle: {
         color: 'grey', 
+        fontSize: 15,
     },
 
     numberContainer: {

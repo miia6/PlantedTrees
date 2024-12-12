@@ -48,7 +48,7 @@ export default function Map({ markers, setMarkers }: MapProps) {
 
   // MIIA'S ADDITION
   useEffect(() => {
-    loadMarkers()
+      loadMarkers()
   }, [])
 
   const toggleSelectedMarker = (marker: MarkerType) => {

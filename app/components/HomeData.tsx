@@ -9,32 +9,31 @@ const CARD_LIMIT = 3
 const SCREEN_WIDTH = Dimensions.get('window').width
 
 const HomeData = ({ passedTrees }) => {
-    //console.log("PASSED " + JSON.stringify(passedTrees))
 
     const groupByLocation = (trees) => {
         const grouped = []
 
         for (const locationId in trees) {
-            const locationData = trees[locationId]
-            //console.log("DATA: " + JSON.stringify(locationData.trees.length))
+            const data = trees[locationId]
+            console.log("DATA: " + JSON.stringify(data))
             grouped.push({
                 locationId,
-                treesAmount: locationData.trees.length,
-                treesData: locationData.trees,
+                treesAmount: data.numberOfTrees,
+                treeType: data.treeType,
             })
         }
         return grouped
     }
 
     const trees = groupByLocation(passedTrees)
-    //console.log("TREES: " + JSON.stringify(trees))
+    console.log("TREES: " + JSON.stringify(trees))
 
     const [currentPage, setCurrentPage] = useState(0)
     const [expandedTree, setExpandedTree] = useState(null)
 
     const router = useRouter()
 
-    const totalPages = Math.ceil((trees.length + 1) / CARD_LIMIT)
+    const totalPages = trees ? Math.ceil((trees.length + 1) / CARD_LIMIT) : 1
     const currentTrees = trees.slice(
         currentPage * CARD_LIMIT,
         currentPage * CARD_LIMIT + CARD_LIMIT
@@ -64,13 +63,11 @@ const HomeData = ({ passedTrees }) => {
     }
 
     const handleAddGrowthPress = (tree) => {
-        console.log("EXPANDED: " + JSON.stringify(tree))
         router.push({
             pathname: '/addGrowth',
             params: { report: JSON.stringify(tree) },
         })
     }
-  
   
     const renderTreeCard = ({ item }) => {
         //console.log("ITEM " + JSON.stringify(item, null, 2))
@@ -89,14 +86,15 @@ const HomeData = ({ passedTrees }) => {
             <TouchableOpacity style={styles.card} onPress={() => handleCardPress(item)}>
 
                 <MaterialCommunityIcons name="tree" size={50} color="#fff" />
-                {/*<Text style={styles.cardText}>{item.treesData[0].species}</Text>*/}
+                <Text style={styles.cardText}>{item.treeType}</Text>
                 <Text style={styles.cardText}>Location: {item.locationId}</Text>
-                <Text style={styles.cardText}>Trees: {item.treesAmount}</Text>
+                <Text style={styles.cardText}>Amount: {item.treesAmount}</Text>
    
             </TouchableOpacity>
         )
     }
 
+    // CHART
 
     const [chartData, setChartData] = useState<any>(null)
 
@@ -105,30 +103,34 @@ const HomeData = ({ passedTrees }) => {
             const storedTrees = await AsyncStorage.getItem('treesByLocation')
             if (storedTrees) {
                 const parsedTrees = JSON.parse(storedTrees)
-                //console.log("TREES IN GROWTH " + JSON.stringify(parsedTrees))
 
                 const aggregatedGrowth = []
-                for (const location of Object.values(parsedTrees)) {
-                for (const tree of location.trees) {
-                    if (tree.growth.length > 0) {
-                        //console.log("GROWTH, LOCATION, TREE: " + tree.growth, location.locationId, tree.id)
-                    aggregatedGrowth.push({
-                        treeId: tree.id, 
-                        locationId: location.locationId,
-                        totalGrowth: tree.growth.reduce((sum, g) => sum + parseFloat(g), 0),
-                    })
+                for (const locationId in parsedTrees) {
+                    const data = parsedTrees[locationId]
+                    console.log("GROWTH DATA: " + JSON.stringify(data), data.growth)
+
+                    if (data.growth) {
+                        aggregatedGrowth.push({
+                            treeType: data.treeType,
+                            locationId: locationId,
+                            totalGrowth: data.growth.reduce((sum, g) => sum + parseFloat(g), 0),
+                        })
                     }
                 }
-            }
 
-                setChartData({
-                    labels: aggregatedGrowth.map(g => g.treeId),
-                    datasets: [
-                        {
-                        data: aggregatedGrowth.map(g => g.totalGrowth), 
-                        },
-                    ],
-                })
+                if (aggregatedGrowth.length > 0) {
+                    const labels = aggregatedGrowth.map(g => `Loc: ${g.locationId}`)
+                    const data = aggregatedGrowth.map(g => g.totalGrowth)
+                    setChartData({
+                        labels: labels, 
+                        datasets: [
+                            { 
+                                data: data, 
+                            },
+                        ],
+                    })
+                    
+                } 
             }
 
         } catch (error) {
@@ -140,16 +142,18 @@ const HomeData = ({ passedTrees }) => {
         fetchGrowthData()
     }, [])
 
-    if (!chartData) {
-        return null
-    }
+    useEffect(() => {
+        console.log("Chart Data (Full):", JSON.stringify(chartData, null, 2))
+        console.log("Datasets Data:", chartData?.datasets?.[0]?.data)
+    }, [chartData])
+
 
     return (
         <View style={styles.container}>
             <Text style={styles.header}>Reported Trees</Text>
 
             <View style={{ opacity: expandedTree ? 0.3 : 1 }}>
-                {trees.length > 0 ? (
+                {trees ? (
                     <>
                         <View style={styles.cardContainer}>
                             <FlatList
@@ -188,7 +192,14 @@ const HomeData = ({ passedTrees }) => {
                         </View>
                     </>
                 ) : (
-                    <Text>No trees reported yet.</Text>
+                    <>
+                        <View style={styles.noTreesContainer}>
+                            <Text style={styles.noTrees}>
+                                No reported trees yet.
+                            </Text>
+                        </View>
+                    </>
+                    
                 )}
             </View>
 
@@ -231,7 +242,8 @@ const HomeData = ({ passedTrees }) => {
                 </View>
             )}
 
-            <View style={styles.chartContainer}>
+            {trees && chartData && (
+                <View style={styles.chartContainer}>
                 <Text style={styles.header}>Growth of Trees</Text>
                     <BarChart
                         data={{
@@ -241,7 +253,7 @@ const HomeData = ({ passedTrees }) => {
                         width={Dimensions.get('window').width * 0.8}
                         height={200}
                         yAxisSuffix=" cm"
-                        yAxisInterval={0.5}
+                        yAxisInterval={1}
                         chartConfig={{
                             backgroundColor: '#F0F0F0',
                             backgroundGradientFrom: '#D6E8D4',
@@ -249,18 +261,17 @@ const HomeData = ({ passedTrees }) => {
                             decimalPlaces: 1, 
                             color: (opacity = 1) => `rgba(85, 85, 85, ${opacity})`,
                             labelColor: (opacity = 1) => `rgba(0, 0, 0, ${opacity})`, 
-                            barPercentage: 0.6, 
-                            categoryPercentage: 0.7, 
+                            barPercentage: 0.7, 
+                            categoryPercentage: 0.6, 
                             propsForLabels: {
                                 fontSize: 10,  
                             },
-
                         }}
                         style={styles.chart}
                     />
             </View>
+            )}
         </View>
-
     )
 }
 
@@ -277,6 +288,16 @@ const styles = StyleSheet.create({
         textAlign: 'center',
         color: '#333',
     },
+    noTreesContainer: {
+        padding: 10,
+        margin: 10,
+    },
+    noTrees: {
+        fontSize: 15,
+        textAlign: 'center',
+        color: '#333',
+    },
+
     cardContainer: {
         width: SCREEN_WIDTH,           
         flexDirection: 'row', 
@@ -290,7 +311,7 @@ const styles = StyleSheet.create({
         width: 100,
         padding: 10,
         height: 120,
-        backgroundColor: '#468364',
+        backgroundColor: '#8EAA8E',
         borderRadius: 10,
         marginHorizontal: 10,
         alignItems: 'center',
@@ -306,7 +327,7 @@ const styles = StyleSheet.create({
         width: 100,
         padding: 15,
         height: 120,
-        backgroundColor: '#468364', 
+        backgroundColor: '#8EAA8E', 
         opacity: 0.5, 
         borderRadius: 10,
         marginHorizontal: 10,
@@ -358,7 +379,7 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         justifyContent: 'center',
         padding: 20,
-        backgroundColor: '#468364',
+        backgroundColor: '#8EAA8E',
         borderRadius: 15,
         width: '70%',
         zIndex: 11, 
@@ -384,11 +405,11 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         justifyContent: 'center',
         borderWidth: 1,
-        borderColor: '#2a6044',
-        shadowColor: '#lightgrey', // Shadow color
+        borderColor: '#A0A0A0',
+        shadowColor: 'grey', // Shadow color
         shadowOffset: {
             width: 0, 
-            height: 2,
+            height: 5,
         },
         shadowOpacity: 0.25,
     },
@@ -408,6 +429,7 @@ const styles = StyleSheet.create({
         fontWeight: 'bold',
     },
 
+
     chartContainer: {
         height: 270,
         margin: 20,
@@ -422,7 +444,7 @@ const styles = StyleSheet.create({
         elevation: 5,
     },
     chart: {
-        borderRadius: 10,
+        borderRadius: 5,
         padding: 10,
     },
     header: {
