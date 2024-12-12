@@ -15,7 +15,6 @@ export default function AddGrowth() {
 
     const handleCancel = () => {
         Keyboard.dismiss()
-        setSelectedTree(null)
         setGrowthAmount(0.00)
         router.push('/')
     }
