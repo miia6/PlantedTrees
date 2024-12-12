@@ -11,13 +11,13 @@ const GrowthData = () => {
             const storedTrees = await AsyncStorage.getItem('treesByLocation')
             if (storedTrees) {
                 const parsedTrees = JSON.parse(storedTrees)
-                console.log("TREES IN GROWTH " + JSON.stringify(parsedTrees))
+                //console.log("TREES IN GROWTH " + JSON.stringify(parsedTrees))
 
                 const aggregatedGrowth = []
                 for (const location of Object.values(parsedTrees)) {
                 for (const tree of location.trees) {
                     if (tree.growth.length > 0) {
-                        console.log("GROWTH, LOCATION, TREE: " + tree.growth, location.locationId, tree.id)
+                        //console.log("GROWTH, LOCATION, TREE: " + tree.growth, location.locationId, tree.id)
                     aggregatedGrowth.push({
                         treeId: tree.id, 
                         locationId: location.locationId,
@@ -76,7 +76,7 @@ const GrowthData = () => {
                         barPercentage: 0.6, 
                         categoryPercentage: 0.7, 
                         propsForLabels: {
-                            fontSize: 10,  // Smaller label font size
+                            fontSize: 10,  
                         },
 
                     }}
