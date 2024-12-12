@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react'
-import { View, Text, FlatList, StyleSheet, TouchableOpacity, Dimensions, Button, TouchableWithoutFeedback } from 'react-native'
+import { View, Text, Image, FlatList, StyleSheet, TouchableOpacity, Dimensions, Button, TouchableWithoutFeedback } from 'react-native'
 import AsyncStorage from '@react-native-async-storage/async-storage'
 import { BarChart } from 'react-native-chart-kit'
 import { MaterialCommunityIcons } from '@expo/vector-icons'
@@ -231,6 +231,16 @@ const HomeData = ({ passedTrees }) => {
                 </View>
             )}
 
+            <Text style={styles.h3}>My commynity's year</Text>
+            <View style={styles.imageContainer}>
+                <Image
+                    source={{uri: 'https://live.staticflickr.com/65535/49673071298_0708ed8ebf_b.jpg'}}
+                    style={styles.image}
+                />
+                <Text style={styles.communityName}>Asgori Village Planters</Text>
+            </View>
+
+
             <View style={styles.chartContainer}>
                 <Text style={styles.header}>Growth of Trees</Text>
                     <BarChart
@@ -430,6 +440,34 @@ const styles = StyleSheet.create({
         fontWeight: 'bold',
         marginBottom: 5, 
         color: '#333',
+    },
+    h3: {
+        color: 'black',
+        fontSize: 18,
+        fontWeight: 'bold',
+        marginHorizontal: 32,
+        marginVertical: 8,
+      },
+    imageContainer: {
+        flex: 1,
+        justifyContent: 'center',
+        alignItems: 'center',
+        position: 'relative',
+    },
+    image: {
+        alignItems:'center',
+        justifyContent: 'center',
+        width: 350, 
+        height: 180,
+        resizeMode: 'cover',
+        borderRadius: 8,
+    },
+    communityName: {
+        position: 'absolute',
+        bottom: 8,
+        left: 10,
+        color: 'white',
+        fontWeight: 700,
     },
 
 })

@@ -31,7 +31,7 @@ export default function Index() {
 
     return (
         <ScrollView style={styles.container}>
-                <Text style={styles.h3}>My compensations</Text>
+            <Text style={styles.h3}>My compensations</Text>
             <View style={styles.longButtonElement}>
                 <View style={styles.compensationStats}>
                     <Text style={styles.compensation}>3310 SSP</Text>
@@ -40,8 +40,7 @@ export default function Index() {
                 <View style={styles.compensationStats}>
                     <Text style={styles.compensation}>560 SSP</Text>
                     <Text style={styles.compensationStat}>balance now</Text>
-                </View>
-                
+                </View>    
             </View>  
             <HomeData passedTrees={trees} />
         </ScrollView>
