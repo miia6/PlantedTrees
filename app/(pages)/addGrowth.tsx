@@ -82,7 +82,6 @@ export default function AddGrowth() {
     return (
         <TouchableWithoutFeedback onPress={() => Keyboard.dismiss()}>
         <View style={styles.container}>
-            <Text style={styles.header}>Report Tree Growth</Text>
 
             <View style={styles.card}>
                 <Text style={styles.cardText}>Tree: {trees.treeType}</Text>
@@ -90,8 +89,8 @@ export default function AddGrowth() {
                 <Text style={styles.cardText}>Amount of trees: {trees.treesAmount}</Text>
             </View>
 
+            <Text style={styles.subHeader}>Growth (in cm):</Text>
             <View style={styles.inputContainer}>
-                <Text style={styles.subHeader}>Growth (in cm):</Text>
                 <TextInput
                     style={styles.input}
                     value={growthAmount}
@@ -126,29 +125,24 @@ const styles = StyleSheet.create({
     container: {
         flex: 1,
         backgroundColor: 'white',
-        paddingHorizontal: 20,
+        paddingHorizontal: 25,
         paddingTop: 30,
-        justifyContent: 'flex-start',
-    },
-    header: {
-        fontSize: 30,
-        fontWeight: 'bold',
-        color: '#333',
-        textAlign: 'center',
-        marginBottom: 20,
     },
     subHeader: {
         fontSize: 20,
-        marginBottom: 10,
-        marginTop: 5,
-        color: '#333',
+        marginTop: 20,
+        left: 10,
+        color: 'black',
         fontWeight: '600',
     },
 
     card: {
-        backgroundColor: '#E9EAEC',
+        flexDirection: 'column',
+        alignItems:'center',
+        justifyContent: 'center',
+        backgroundColor: '#8EAA8E',
         borderRadius: 10,
-        padding: 20,
+        padding: 10,
         marginBottom: 20,
         elevation: 5,
         shadowColor: '#000', 
@@ -157,13 +151,14 @@ const styles = StyleSheet.create({
         shadowRadius: 5,
     },
     cardText: {
-        fontSize: 20,
-        color: '#333',
+        color: 'white',
+        margin: 5,
+        fontSize: 18,
+        fontWeight: 'semibold',
     },
 
-    numberContainer: {
-        marginLeft: 30,
-        flexDirection: 'row',
+    inputContainer: {
+        flexDirection: 'column',
         alignItems: 'center',
         justifyContent: 'center',
         padding: 10, 
@@ -209,6 +204,6 @@ const styles = StyleSheet.create({
     addButton: {
         width: 100,
         height: 45,
-        backgroundColor: '#468364',
+        backgroundColor: '#8EAA8E',
     },
 })

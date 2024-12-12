@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react'
-import { View, Text, FlatList, StyleSheet, TouchableOpacity, Dimensions, Button, TouchableWithoutFeedback } from 'react-native'
+import { View, Text, Image, FlatList, StyleSheet, TouchableOpacity, Dimensions, Button, TouchableWithoutFeedback } from 'react-native'
 import AsyncStorage from '@react-native-async-storage/async-storage'
 import { BarChart } from 'react-native-chart-kit'
 import { MaterialCommunityIcons } from '@expo/vector-icons'
@@ -150,6 +150,19 @@ const HomeData = ({ passedTrees }) => {
 
     return (
         <View style={styles.container}>
+
+            <Text style={styles.header}>My compensations</Text>
+                <View style={styles.longButtonElement}>
+                    <View style={styles.compensationStats}>
+                        <Text style={styles.compensation}>3310 SSP</Text>
+                        <Text style={styles.compensationStat}>this month</Text>
+                    </View>
+                    <View style={styles.compensationStats}>
+                        <Text style={styles.compensation}>560 SSP</Text>
+                        <Text style={styles.compensationStat}>balance now</Text>
+                    </View>    
+                </View>  
+                
             <Text style={styles.header}>Reported Trees</Text>
 
             <View style={{ opacity: expandedTree ? 0.3 : 1 }}>
@@ -242,8 +255,18 @@ const HomeData = ({ passedTrees }) => {
                 </View>
             )}
 
+            <Text style={styles.header}>My commynity's year</Text>
+                <View style={styles.imageContainer}>
+                    <Image
+                        source={{uri: 'https://live.staticflickr.com/65535/49673071298_0708ed8ebf_b.jpg'}}
+                        style={styles.image}
+                    />
+                    <Text style={styles.communityName}>Asgori Village Planters</Text>
+                </View>
+
             {trees && chartData && (
                 <View style={styles.chartContainer}>
+
                 <Text style={styles.header}>Growth of Trees</Text>
                     <BarChart
                         data={{
@@ -281,13 +304,47 @@ const styles = StyleSheet.create({
         padding: 20,
         alignItems: 'center',
     },
+
+    longButtonElement: {
+        flexDirection: 'row',
+        marginHorizontal: 15,
+        marginBottom: 20,
+        marginTop: 10,
+        padding: 24,
+        alignItems:'center',
+        justifyContent: 'center',
+        backgroundColor: '#8EAA8E',
+        borderRadius: 10,
+        height: 'auto',
+        shadowColor: '#000', 
+        shadowOffset: { width: 0, height: 2 }, 
+        shadowOpacity: 0.25,
+        shadowRadius: 3.84,
+    },
+    compensationStats: {
+        paddingHorizontal: 22,
+        paddingVertical: 8,
+        alignItems: 'center',
+    },
+    compensation: {
+        fontSize: 26,
+        fontWeight: 700,
+        color: 'white',
+    },
+    compensationStat: {
+        fontSize: 16,
+        fontWeight: 600,
+        color: 'white',
+    },
+
     header: {
         fontSize: 20,
         fontWeight: 'bold',
-        marginBottom: 20,
+        marginBottom: 5,
         textAlign: 'center',
-        color: '#333',
+        color: 'black',
     },
+
     noTreesContainer: {
         padding: 10,
         margin: 10,
@@ -308,6 +365,7 @@ const styles = StyleSheet.create({
         paddingHorizontal: 15,
     },
     card: {
+        marginTop: 10,
         width: 100,
         padding: 10,
         height: 120,
@@ -324,6 +382,7 @@ const styles = StyleSheet.create({
         marginTop: 5
     },
     addCard: {
+        marginTop: 10,
         width: 100,
         padding: 15,
         height: 120,
@@ -346,6 +405,7 @@ const styles = StyleSheet.create({
         justifyContent: 'center',  
         alignItems: 'center',
         marginTop: 10,
+        marginBottom: 20,
     },
     pageIndicator: {
         fontSize: 13,
@@ -375,6 +435,7 @@ const styles = StyleSheet.create({
     },
 
     expandedCard: {
+        top: 150,
         position: 'absolute',
         alignItems: 'center',
         justifyContent: 'center',
@@ -429,29 +490,41 @@ const styles = StyleSheet.create({
         fontWeight: 'bold',
     },
 
+    imageContainer: {
+        flex: 1,
+        marginVertical: 10,
+        justifyContent: 'center',
+        alignItems: 'center',
+        position: 'relative',
+    },
+    image: {
+        alignItems:'center',
+        justifyContent: 'center',
+        width: 350, 
+        height: 180,
+        resizeMode: 'cover',
+        borderRadius: 8,
+    },
+    communityName: {
+        position: 'absolute',
+        bottom: 8,
+        left: 10,
+        color: 'white',
+        fontWeight: 700,
+    },
 
     chartContainer: {
-        height: 270,
-        margin: 20,
+        marginTop: 15,
+        height: 'auto',
+        width: 'auto',
+        margin: 10,
+        padding: 0,
         alignItems: 'center',
-        backgroundColor: '#fff', // White background to contrast with chart
-        borderRadius: 10,
-        padding: 10,
-        shadowColor: '#000',
-        shadowOffset: { width: 0, height: 2 },
-        shadowOpacity: 0.2,
-        shadowRadius: 4,
-        elevation: 5,
     },
     chart: {
-        borderRadius: 5,
-        padding: 10,
-    },
-    header: {
-        fontSize: 20,
-        fontWeight: 'bold',
-        marginBottom: 5, 
-        color: '#333',
+        borderRadius: 10,
+        marginTop: 10,
+        padding: 0,
     },
 
 })

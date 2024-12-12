@@ -56,8 +56,6 @@ export default function AddTree({ reloadTrees }) {
 
     const handleCancel = async () => {
         try {
-            //setSpecies('')
-            //setLocation('')
             setChosen('')
             setNumberOfTrees(1)
             router.push('/')
@@ -94,22 +92,7 @@ export default function AddTree({ reloadTrees }) {
 
             treesByLocation[locationId].numberOfTrees += numberOfTrees
             await AsyncStorage.setItem('treesByLocation', JSON.stringify(treesByLocation))
-            console.log('Data saved:', JSON.stringify(treesByLocation))
-    
-            /*const newTrees = []
-            const currentCount = treesByLocation[location].trees.length
-            for (let i = 1; i <= numberOfTrees; i++) {
-                const uniqueId = `${species}.${currentCount + i}`
-                newTrees.push({ id: uniqueId, species, location, numberOfTrees, growth: [] })
-            }
-    
-            treesByLocation[location].trees = [
-                ...treesByLocation[location].trees,
-                ...newTrees,
-            ]
-    
-            await AsyncStorage.setItem('treesByLocation', JSON.stringify(treesByLocation))
-            console.log('Data saved:', JSON.stringify(treesByLocation))*/
+            //console.log('Data saved:', JSON.stringify(treesByLocation))
     
             Alert.alert(
                 "You have successfully added trees!",
@@ -118,8 +101,6 @@ export default function AddTree({ reloadTrees }) {
                     {
                         text: "OK. Don't continue reporting",
                         onPress: () => {
-                            //setSpecies('')
-                            //setLocation('')
                             setChosen('')
                             setNumberOfTrees(1)
                             router.push('/')
@@ -129,8 +110,6 @@ export default function AddTree({ reloadTrees }) {
                     {
                         text: "OK. Continue reporting",
                         onPress: () => {
-                            //setSpecies('')
-                            //setLocation('')
                             setChosen('')
                             setNumberOfTrees(1)
                         },
@@ -146,11 +125,10 @@ export default function AddTree({ reloadTrees }) {
 
     return (
         <View style={styles.container}>
-            <Text style={styles.header}>Report new trees</Text>
 
                 <View style={styles.inputContainer}>
 
-                <Text style={styles.subHeader}>Location</Text>
+                <Text style={styles.subHeader}>Location and specie</Text>
                         <Dropdown
                             style={styles.dropdown}
                             data={options}
@@ -161,18 +139,6 @@ export default function AddTree({ reloadTrees }) {
                             onChange={(item) => setChosen(item.value)}
                             placeholderStyle={styles.placeholderStyle}
                         />
-
-                    {/*<Text style={styles.subHeader}>Specie</Text>
-                        <Dropdown
-                            style={styles.dropdown}
-                            data={speciesOptions}
-                            labelField="label"
-                            valueField="value"
-                            placeholder="Search and select a specie..."
-                            value={species}
-                            onChange={(item) => setSpecies(item.value)}
-                            placeholderStyle={styles.placeholderStyle}
-                        />*/}
 
                     <Text style={styles.subHeader}>Amount</Text>
                         <View style={styles.numberContainer}>
@@ -220,18 +186,11 @@ const styles = StyleSheet.create({
         paddingTop: 30,
         justifyContent: 'flex-start',
     },
-    header: {
-        fontSize: 30,
-        fontWeight: 'bold',
-        color: '#333',
-        textAlign: 'center',
-        marginBottom: 20,
-    },
     subHeader: {
         fontSize: 20,
         marginBottom: 10,
         marginTop: 5,
-        color: '#333',
+        color: 'black',
         fontWeight: '600',
     },
 
@@ -269,7 +228,7 @@ const styles = StyleSheet.create({
         borderRadius: 8,
     },
     plusButton: {
-        backgroundColor: '#99BC85', 
+        backgroundColor: '#8EAA8E', 
     },
     buttonText: {
         fontSize: 24,
@@ -300,6 +259,6 @@ const styles = StyleSheet.create({
     addButton: {
         width: 100,
         height: 45,
-        backgroundColor: '#468364', 
+        backgroundColor: '#8EAA8E', 
     },
 })

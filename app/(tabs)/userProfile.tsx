@@ -66,6 +66,10 @@ const styles = StyleSheet.create({
     borderRadius: 20,
     width: 102,
     height: 102,
+    shadowColor: '#000', 
+    shadowOffset: { width: 0, height: 2 }, 
+    shadowOpacity: 0.25,
+    shadowRadius: 3.84,
   },
   longButtonElement: {
     flexDirection: 'row',
@@ -75,6 +79,10 @@ const styles = StyleSheet.create({
     backgroundColor: '#8EAA8E',
     borderRadius: 20,
     height: 102,
+    shadowColor: '#000', 
+    shadowOffset: { width: 0, height: 2 }, 
+    shadowOpacity: 0.25,
+    shadowRadius: 3.84,
   },
   text: {
     color: 'black',

@@ -79,6 +79,10 @@ const styles = StyleSheet.create({
     backgroundColor: '#8EAA8E',
     borderRadius: 16,
     height: 'auto',
+    shadowColor: '#000', 
+    shadowOffset: { width: 0, height: 2 }, 
+    shadowOpacity: 0.25,
+    shadowRadius: 3.84,
   },
   collectionPointElement: {
     flexDirection: 'row',
@@ -89,6 +93,10 @@ const styles = StyleSheet.create({
     backgroundColor: '#8EAA8E',
     borderRadius: 16,
     height: 'auto',
+    shadowColor: '#000', 
+    shadowOffset: { width: 0, height: 2 }, 
+    shadowOpacity: 0.25,
+    shadowRadius: 3.84,
   },
   buttonText: {
     padding: 16,
