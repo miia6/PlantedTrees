@@ -119,7 +119,7 @@ const HomeData = ({ passedTrees }) => {
                 }
 
                 if (aggregatedGrowth.length > 0) {
-                    const labels = aggregatedGrowth.map(g => `Loc: ${g.locationId}`)
+                    const labels = aggregatedGrowth.map(g => g.treeType) // `Loc: ${g.locationId}`
                     const data = aggregatedGrowth.map(g => g.totalGrowth)
                     setChartData({
                         labels: labels, 
