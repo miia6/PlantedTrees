@@ -4,7 +4,7 @@ import { Dropdown } from 'react-native-element-dropdown'
 import AsyncStorage from '@react-native-async-storage/async-storage'
 import { useRouter } from 'expo-router'
 
-export default function AddTree({ reloadTrees }) {
+export default function AddTree () {
     //const [species, setSpecies] = useState('')
     //const [location, setLocation] = useState('')
     const [chosen, setChosen] = useState('')
@@ -103,6 +103,7 @@ export default function AddTree({ reloadTrees }) {
                         onPress: () => {
                             setChosen('')
                             setNumberOfTrees(1)
+                            //reloadTrees()
                             router.push('/')
                         },
                         style: 'cancel',
@@ -112,6 +113,7 @@ export default function AddTree({ reloadTrees }) {
                         onPress: () => {
                             setChosen('')
                             setNumberOfTrees(1)
+                            //reloadTrees()
                         },
                     },
                 ],
@@ -125,9 +127,9 @@ export default function AddTree({ reloadTrees }) {
 
     return (
         <View style={styles.container}>
+            <View style={styles.centeredContent}>
 
                 <View style={styles.inputContainer}>
-
                 <Text style={styles.subHeader}>Location and specie</Text>
                         <Dropdown
                             style={styles.dropdown}
@@ -142,8 +144,8 @@ export default function AddTree({ reloadTrees }) {
 
                     <Text style={styles.subHeader}>Amount</Text>
                         <View style={styles.numberContainer}>
-                            <TouchableOpacity style={styles.button} onPress={decrement}>
-                                <Text style={styles.buttonText}>-</Text>
+                            <TouchableOpacity style={styles.AmountButton} onPress={decrement}>
+                                <Text style={styles.AmountButtonText}>-</Text>
                             </TouchableOpacity>
 
                     
@@ -157,11 +159,12 @@ export default function AddTree({ reloadTrees }) {
                             }}
                             />
 
-                            <TouchableOpacity style={[styles.button, styles.plusButton]} onPress={increment}>
-                                <Text style={styles.buttonText}>+</Text>
+                            <TouchableOpacity style={[styles.AmountButton, styles.plusButton]} onPress={increment}>
+                                <Text style={styles.AmountButtonText}>+</Text>
                             </TouchableOpacity>
                         </View>
-                </View>
+                    </View>
+                </View>  
 
                 <View style={styles.buttonContainer}>
                     <TouchableOpacity style={[styles.button, styles.cancelButton]} onPress={handleCancel}>
@@ -172,9 +175,8 @@ export default function AddTree({ reloadTrees }) {
                         <Text style={styles.buttonText}>Add</Text>
                     </TouchableOpacity>
                 </View>
-
+                 
         </View>
-
     )
 }
 
@@ -183,8 +185,11 @@ const styles = StyleSheet.create({
         flex: 1,
         backgroundColor: 'white',
         paddingHorizontal: 20,
-        paddingTop: 30,
-        justifyContent: 'flex-start',
+    },
+    centeredContent: {
+        flex: 1, // Allows it to take the available space
+        justifyContent: 'center', // Vertically center content
+        paddingHorizontal: 10,
     },
     subHeader: {
         fontSize: 20,
@@ -218,25 +223,29 @@ const styles = StyleSheet.create({
         justifyContent: 'center',
         marginBottom: 30,
     },
-    button: {
-        width: 40,
-        height: 40,
+    AmountButton: {
+        width: 35,
+        height: 35,
         backgroundColor: '#ccc',
         justifyContent: 'center',
         alignItems: 'center',
         marginHorizontal: 10,
         borderRadius: 8,
+        shadowColor: '#000', 
+        shadowOffset: { width: 0, height: 1.5 }, 
+        shadowOpacity: 0.25,
+        shadowRadius: 3.84,
     },
     plusButton: {
         backgroundColor: '#8EAA8E', 
     },
-    buttonText: {
-        fontSize: 24,
+    AmountButtonText: {
+        fontSize: 20,
         fontWeight: 'bold',
         color: 'white',
     },
     input: {
-        width: 60,
+        width: 50,
         height: 40,
         borderColor: '#ccc',
         borderWidth: 1,
@@ -249,16 +258,30 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
         justifyContent: 'space-evenly',
         marginTop: 'auto',
-        paddingBottom: 30,
+        paddingBottom: 40,
+    },
+    button: {
+        width: 90,
+        height: 40,
+        backgroundColor: '#ccc',
+        justifyContent: 'center',
+        alignItems: 'center',
+        marginHorizontal: 10,
+        borderRadius: 8,
+        shadowColor: '#000', 
+        shadowOffset: { width: 0, height: 1.5 }, 
+        shadowOpacity: 0.25,
+        shadowRadius: 3.84,
+    },
+    buttonText: {
+        fontSize: 20,
+        fontWeight: 'bold',
+        color: 'white',
     },
     cancelButton: {
-        width: 100,
-        height: 45,
         backgroundColor: 'grey', 
     },
     addButton: {
-        width: 100,
-        height: 45,
         backgroundColor: '#8EAA8E', 
     },
 })

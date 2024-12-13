@@ -30,7 +30,7 @@ export default function AddGrowth() {
 
             const storedTrees = await AsyncStorage.getItem('treesByLocation')
             const parsedTrees = storedTrees ? JSON.parse(storedTrees) : []
-            console.log("STORED  " + JSON.stringify(parsedTrees))
+            //console.log("STORED  " + JSON.stringify(parsedTrees))
             //console.log("SELECTED " + selectedTree)
 
             let treeFound = false
@@ -53,7 +53,7 @@ export default function AddGrowth() {
 
             const updatedData = JSON.stringify(parsedTrees)
             await AsyncStorage.setItem('treesByLocation', updatedData)
-            console.log("UPDATED: " + updatedData)
+            //console.log("UPDATED: " + updatedData)
             setGrowthAmount(0.00)
 
             Alert.alert(
@@ -80,30 +80,32 @@ export default function AddGrowth() {
 
     return (
         <TouchableWithoutFeedback onPress={() => Keyboard.dismiss()}>
-        <View style={styles.container}>
+            <View style={styles.container}>
+                <View style={styles.centeredContent}>
 
-            <View style={styles.card}>
-                <Text style={styles.cardText}>Tree: {trees.treeType}</Text>
-                <Text style={styles.cardText}>Location: {trees.locationId}</Text>
-                <Text style={styles.cardText}>Amount of trees: {trees.treesAmount}</Text>
-            </View>
+                <View style={styles.card}>
+                    <Text style={styles.cardText}>Tree: {trees.treeType}</Text>
+                    <Text style={styles.cardText}>Location: {trees.locationId}</Text>
+                    <Text style={styles.cardText}>Amount of trees: {trees.treesAmount}</Text>
+                </View>
 
-            <Text style={styles.subHeader}>Growth (in cm):</Text>
-            <View style={styles.inputContainer}>
-                <TextInput
-                    style={styles.input}
-                    value={growthAmount}
-                    keyboardType="numeric"
-                    placeholder="cm"
-                    onChangeText={(text) => {
-                        const formattedText = text.replace(',', '.').replace(/[^0-9.]/g, '')
-                        const decimalParts = formattedText.split('.')
+                <Text style={styles.subHeader}>Growth (in cm):</Text>
+                <View style={styles.inputContainer}>
+                    <TextInput
+                        style={styles.input}
+                        value={growthAmount}
+                        keyboardType="numeric"
+                        placeholder="cm"
+                        onChangeText={(text) => {
+                            const formattedText = text.replace(',', '.').replace(/[^0-9.]/g, '')
+                            const decimalParts = formattedText.split('.')
 
-                        if (decimalParts.length <= 2) {
-                            setGrowthAmount(formattedText)
-                        }
-                    }}
-                />
+                            if (decimalParts.length <= 2) {
+                                setGrowthAmount(formattedText)
+                            }
+                        }}
+                    />
+                </View>
             </View>
 
             <View style={styles.buttonContainer}>
@@ -124,8 +126,12 @@ const styles = StyleSheet.create({
     container: {
         flex: 1,
         backgroundColor: 'white',
-        paddingHorizontal: 25,
-        paddingTop: 30,
+        paddingHorizontal: 20,
+    },
+    centeredContent: {
+        flex: 1, // Allows it to take the available space
+        justifyContent: 'center', // Vertically center content
+        paddingHorizontal: 10,
     },
     subHeader: {
         fontSize: 20,
@@ -142,7 +148,7 @@ const styles = StyleSheet.create({
         backgroundColor: '#8EAA8E',
         borderRadius: 10,
         padding: 10,
-        marginBottom: 20,
+        marginBottom: 10,
         elevation: 5,
         shadowColor: '#000', 
         shadowOffset: { width: 0, height: 2 },
@@ -163,23 +169,6 @@ const styles = StyleSheet.create({
         padding: 10, 
         borderRadius: 8, 
     },
-    button: {
-        width: 'auto',
-        height: 40,
-        backgroundColor: '#ccc',
-        justifyContent: 'center',
-        alignItems: 'center',
-        marginHorizontal: 10,
-        borderRadius: 8,
-    },
-    plusButton: {
-        backgroundColor: '#99BC85',
-    },
-    buttonText: {
-        fontSize: 24,
-        fontWeight: 'bold',
-        color: 'white',
-    },
     input: {
         width: 60,
         height: 40,
@@ -193,16 +182,30 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
         justifyContent: 'space-evenly',
         marginTop: 'auto',
-        paddingBottom: 30,
+        paddingBottom: 50,
+    },
+    button: {
+        width: 90,
+        height: 40,
+        backgroundColor: '#ccc',
+        justifyContent: 'center',
+        alignItems: 'center',
+        marginHorizontal: 10,
+        borderRadius: 8,
+        shadowColor: '#000', 
+        shadowOffset: { width: 0, height: 1.5 }, 
+        shadowOpacity: 0.25,
+        shadowRadius: 3.84,
+    },
+    buttonText: {
+        fontSize: 20,
+        fontWeight: 'bold',
+        color: 'white',
     },
     cancelButton: {
-        width: 100,
-        height: 45,
         backgroundColor: 'grey',
     },
     addButton: {
-        width: 100,
-        height: 45,
         backgroundColor: '#8EAA8E',
     },
 })
