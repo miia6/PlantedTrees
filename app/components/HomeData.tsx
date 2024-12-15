@@ -21,9 +21,25 @@ const HomeData = () => {
             const storedTrees = await AsyncStorage.getItem('treesByLocation')
             if (storedTrees) {
                 const parsedTrees = JSON.parse(storedTrees)
-                setFetchedTrees(parsedTrees)
+                //setFetchedTrees(parsedTrees)
 
-                const aggregatedGrowth = []
+                const groupedByDate = parsedTrees.reduce((acc, report) => {
+                    const { date } = report
+                    if (!acc[date]) {
+                        acc[date] = []
+                    }
+                    acc[date].push(report)
+                    return acc
+                }, {})
+
+                const groupedReportsArray = Object.keys(groupedByDate).map(date => ({
+                    date,
+                    reports: groupedByDate[date],
+                }))
+                //console.log("GROUPED: " + JSON.stringify(groupedReportsArray))
+                setFetchedTrees(groupedReportsArray)
+
+                /*const aggregatedGrowth = []
                 for (const locationId in parsedTrees) {
                     const data = parsedTrees[locationId]
                     //console.log("GROWTH DATA: " + JSON.stringify(data), data.growth)
@@ -35,11 +51,38 @@ const HomeData = () => {
                             totalGrowth: data.growth.reduce((sum, g) => sum + parseFloat(g), 0),
                         })
                     }
-                }
+                }*/
 
-                if (aggregatedGrowth.length > 0) {
-                    const labels = aggregatedGrowth.map(g => g.treeType) // `Loc: ${g.locationId}`
-                    const data = aggregatedGrowth.map(g => g.totalGrowth)
+                const aggregatedGrowth = parsedTrees.reduce((acc, report) => {
+
+                    const { treeType, growth, date } = report
+            
+                    const totalGrowth = growth.length > 0
+                        ? growth.reduce((sum, entry) => sum + parseFloat(entry), 0)
+                        : 0
+            
+                    const label = `${date} - ${treeType}`
+    
+                    if (!acc[label]) {
+                        acc[label] = 0
+                    }
+
+                    acc[label] += totalGrowth
+                
+                    return acc
+                }, {})
+                //console.log('GROWTH ' + JSON.stringify(aggregatedGrowth))
+
+                if ( aggregatedGrowth /*aggregatedGrowth.length > 0*/) {
+                    //const labels = aggregatedGrowth.map(g => g.treeType) // `Loc: ${g.locationId}`
+                    //const data = aggregatedGrowth.map(g => g.totalGrowth)
+                    
+                    const labels = Object.keys(aggregatedGrowth).map(label => {
+                        const treeType = label.split(" - ")[1]
+                        return treeType
+                    })
+                    const data = Object.values(aggregatedGrowth)
+
                     setChartData({
                         labels: labels, 
                         datasets: [
@@ -75,7 +118,8 @@ const HomeData = () => {
         }
         return grouped
     }
-    const trees = groupByLocation(fetchedTrees)
+    //const trees = groupByLocation(fetchedTrees)
+    const trees = fetchedTrees
     //console.log("TREES: " + JSON.stringify(trees))
 
     const totalPages = trees ? Math.ceil((trees.length + 1) / CARD_LIMIT) : 1
@@ -131,9 +175,8 @@ const HomeData = () => {
             <TouchableOpacity style={styles.card} onPress={() => handleCardPress(item)}>
 
                 <MaterialCommunityIcons name="tree" size={50} color="#fff" />
-                <Text style={styles.cardText}>{item.treeType}</Text>
-                <Text style={styles.cardText}>Location: {item.locationId}</Text>
-                <Text style={styles.cardText}>Amount: {item.treesAmount}</Text>
+                <Text style={styles.cardText}>#{item.date}</Text>
+                <Text style={styles.cardText}>{item.reports[0].treeType}</Text>
    
             </TouchableOpacity>
         )
@@ -216,8 +259,10 @@ const HomeData = () => {
                             <View style={styles.expandedCard}>
                             
                                 <MaterialCommunityIcons name="tree" size={80} color="#fff" />
-                                <Text style={styles.expandedCardText}>Location: {expandedTree.locationId}</Text>
-                                <Text style={styles.expandedCardText}>Trees: {expandedTree.treesAmount}</Text>
+                                <Text style={styles.expandedCardText}>#{expandedTree.date}</Text>
+                                <Text style={styles.expandedCardText}>{expandedTree.reports[0].treeType}</Text>
+                                <Text style={styles.expandedCardText}>Location: {expandedTree.reports[0].locationId}</Text>
+                                <Text style={styles.expandedCardText}>Trees: {expandedTree.reports[0].numberOfTrees}</Text>
 
                                 <View style={styles.buttonContainer}>
                                     <TouchableOpacity

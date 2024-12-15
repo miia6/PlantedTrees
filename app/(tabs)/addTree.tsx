@@ -75,11 +75,24 @@ export default function AddTree () {
         }
     
         try {
-            const storedTrees = await AsyncStorage.getItem('treesByLocation')
-            const treesByLocation = storedTrees ? JSON.parse(storedTrees) : {}
+            const currentDate = '11.12.2024' //new Date().toLocaleDateString('fi-FI')
 
-            const selectedOption = options.find(option => option.value === chosen);
-            const locationId = selectedOption.value;
+            const selectedOption = options.find(option => option.value === chosen)
+
+            const newReport = {
+                locationId: selectedOption.value,
+                treeType: selectedOption.treeType,
+                numberOfTrees: numberOfTrees,
+                date: currentDate,
+                growth: [],
+            }
+    
+            const storedTrees = await AsyncStorage.getItem('treesByLocation')
+            const treesByLocation = storedTrees ? JSON.parse(storedTrees) : []
+            treesByLocation.push(newReport)
+            await AsyncStorage.setItem('treesByLocation', JSON.stringify(treesByLocation))
+            
+            /*const locationId = selectedOption.value;
             const treeType = selectedOption.treeType;
     
             if (!treesByLocation[locationId]) {
@@ -87,12 +100,13 @@ export default function AddTree () {
                     treeType,
                     numberOfTrees: 0,
                     growth: [], 
+                    date: currentDate,
                 }
             }
 
             treesByLocation[locationId].numberOfTrees += numberOfTrees
-            await AsyncStorage.setItem('treesByLocation', JSON.stringify(treesByLocation))
-            //console.log('Data saved:', JSON.stringify(treesByLocation))
+            await AsyncStorage.setItem('treesByLocation', JSON.stringify(treesByLocation))*/
+            console.log('Data saved:', JSON.stringify(treesByLocation))
     
             Alert.alert(
                 "You have successfully added trees!",

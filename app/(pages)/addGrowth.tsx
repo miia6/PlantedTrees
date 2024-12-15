@@ -30,13 +30,23 @@ export default function AddGrowth() {
 
             const storedTrees = await AsyncStorage.getItem('treesByLocation')
             const parsedTrees = storedTrees ? JSON.parse(storedTrees) : []
-            //console.log("STORED  " + JSON.stringify(parsedTrees))
+            console.log("STORED  " + JSON.stringify(parsedTrees))
             //console.log("SELECTED " + selectedTree)
 
             let treeFound = false
-            for (const locationId in parsedTrees) {
+            /*for (const locationId in parsedTrees) {
                 const data = parsedTrees[locationId]
                 if (locationId === trees.locationId) {
+                    //console.log("FOUNDED: " + JSON.stringify(data))
+                    data.growth.push(growthAmount)
+                    treeFound = true
+                    break
+                }
+            }*/
+
+            for (const report in parsedTrees) {
+                const data = parsedTrees[report]
+                if (data.date === trees.date && data.treeType === trees.reports[0].treeType) {
                     //console.log("FOUNDED: " + JSON.stringify(data))
                     data.growth.push(growthAmount)
                     treeFound = true
@@ -58,7 +68,7 @@ export default function AddGrowth() {
 
             Alert.alert(
                 'Growth Added', 
-                `Growth of ${growthAmount} cm added to ${trees.treeType}`,
+                `Growth of ${growthAmount} cm added to ${trees.reports[0].treeType}`,
                 [
                     {
                         text: 'OK',
@@ -84,9 +94,10 @@ export default function AddGrowth() {
                 <View style={styles.centeredContent}>
 
                 <View style={styles.card}>
-                    <Text style={styles.cardText}>Tree: {trees.treeType}</Text>
-                    <Text style={styles.cardText}>Location: {trees.locationId}</Text>
-                    <Text style={styles.cardText}>Amount of trees: {trees.treesAmount}</Text>
+                <Text style={styles.cardText}>{trees.date}</Text>
+                    <Text style={styles.cardText}>{trees.reports[0].treeType}</Text>
+                    <Text style={styles.cardText}>Location: {trees.reports[0].locationId}</Text>
+                    <Text style={styles.cardText}>Amount of trees: {trees.reports[0].numberOfTrees}</Text>
                 </View>
 
                 <Text style={styles.subHeader}>Growth (in cm):</Text>
